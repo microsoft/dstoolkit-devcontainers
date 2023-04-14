@@ -1,0 +1,74 @@
+# Github Actions Workflow for CI
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install requirements
+        run: |
+          python -m venv env
+          source env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r .github/workflows/requirements.txt
+
+      - name: Run flake8 tests
+        run: |
+          source env/bin/activate
+          flake8 --max-line-length 88 --exclude env,notebooks
+
+      - name: Run bandit tests
+        run: |
+          source env/bin/activate
+          bandit -r --configfile bandit.yml src notebooks
+
+      - name: Run pytest in docker containers
+        run: ./ci-tests.sh
+        env:
+          BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: pytest
+          path: |
+            **/test-results-*.xml
+          reporter: java-junit
+
+      - name: Publish Code Coverage Summary Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          badge: true
+          output: both
+          format: markdown
+          filename: coverage.xml
+
+      - name: Add code coverage summary markdown to github step summary
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Archive test and code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-and-coverage-results
+          path: |
+            **/test-reuslts-*.xml
+            coverage.xml

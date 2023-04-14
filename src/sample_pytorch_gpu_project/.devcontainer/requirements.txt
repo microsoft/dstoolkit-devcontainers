@@ -1,0 +1,7 @@
+torch==2.0.0
+torchvision==0.15.1
+# use this below if you want to use torch 1.13.1 instead. 
+#  you need --extra-index-url flag as stated in https://pytorch.org/get-started/previous-versions/#linux-and-windows-1
+# torch==1.13.1+cu117
+# torchvision==0.14.1+cu117
+# --extra-index-url https://download.pytorch.org/whl/cu117

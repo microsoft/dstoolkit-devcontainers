@@ -1,0 +1,16 @@
+# Ensure these req versions are in sync together with the following so that code quality checks are consistent:
+# - src/common/requirements.txt
+# - notebooks/.devcontainer/requirements.txt
+# - .azuredevops/requirements.txt
+# - .github/workflows/requirements.txt
+bandit==1.7.5
+black==23.1.0
+flake8==6.0.0
+isort==5.12.0
+mypy==1.1.1
+pytest==7.2.2
+pytest-cov==4.0.0
+pre-commit==3.2.1
+
+# other libraries for common modules
+ipykernel==6.22.0

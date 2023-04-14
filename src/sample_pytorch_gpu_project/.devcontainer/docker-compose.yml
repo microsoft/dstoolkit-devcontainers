@@ -1,0 +1,11 @@
+version: '3'
+services:
+  sample_pytorch_gpu_project:
+    env_file: ../../../.env
+    build:
+      context: ../../
+      dockerfile: sample_pytorch_gpu_project/.devcontainer/Dockerfile
+    volumes:
+      # Mount the root folder that contains .git
+      - ../../..:/workspace:cached
+    command: /bin/sh -c "while sleep 1000; do :; done"
