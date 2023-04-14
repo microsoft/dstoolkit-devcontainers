@@ -1,6 +1,6 @@
 #!/bin/bash
 : '
-This script wil run all unit tests in the repository (for all directories under src/ that
+This script will run all unit tests in the repository (for all directories under src/ that
 have at least one test_*.py under a tests folder). It will build a Docker image for each directory with tests, 
 using the Dockerfile in the .devcontainer directory. It will then run pytest in the Docker container
 and save the test results and coverage report to the build artifacts directory. This script can be run
