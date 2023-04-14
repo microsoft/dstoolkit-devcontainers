@@ -1,0 +1,65 @@
+# Azure DevOps pipeline for CI (Microsoft-hosted version)
+# As the Microsoft-hosted agent option has a limit of 10GB of storage for disk outputs from a pipeline, 
+# this causes an issue when the Docker images for modules under src require more than 10GB of storage. 
+# If you will run into space issues (or other limitations with a Microsoft hosted agent option outlined in
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations), 
+# consider using the .azuredevops/ado-ci-pipeline-self-hosted.yml version or using scale set agents, see
+# this link for more info: https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops
+# Note that docker images will only be build for src directories that contain at least one test file, so the
+# total space consumed by Docker builds will be dependent on which modules under src contain tests.
+# For setting up the pipeline in ADO see:
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops&tabs=yaml%2Cbrowser
+
+
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+  
+steps:
+  - task: UsePythonVersion@0
+    displayName: "Use Python 3.9"
+    inputs:
+      versionSpec: 3.9
+
+  - script: |
+      python -m venv env
+      source env/bin/activate
+      python -m pip install --upgrade pip
+      pip install -r .azuredevops/requirements.txt
+    displayName: "Install requirements"
+
+  - bash: |
+      source env/bin/activate
+      flake8 --max-line-length 88 --exclude env,notebooks
+    displayName: "Run flake8 tests"
+    
+  - bash: |
+      source env/bin/activate
+      bandit -r --configfile bandit.yml src notebooks
+    displayName: "Run bandit tests"
+
+  - task: Bash@3
+    inputs:
+      targetType: 'filePath'
+      filePath: ci-tests.sh
+    env:
+      BUILD_ARTIFACTSTAGINGDIRECTORY: $(Build.ArtifactStagingDirectory)
+    displayName: "Run pytest in docker containers"
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results-*.xml'
+      searchFolder: $(Build.ArtifactStagingDirectory)
+    condition: succeededOrFailed()
+
+  # Publish code coverage results
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'Cobertura' # Available options: 'JaCoCo', 'Cobertura'
+      summaryFileLocation: '$(Build.ArtifactStagingDirectory)/coverage.xml'
+      pathToSources: src/
+      #reportDirectory: # Optional
+      #additionalCodeCoverageFiles: # Optional
+      failIfCoverageEmpty: false # Optional

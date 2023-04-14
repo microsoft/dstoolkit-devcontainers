@@ -1,0 +1,85 @@
+# Azure DevOps pipeline for CI (self-hoseted version)
+# As the Microsoft-hosted agent option has a limit of 10GB of storage for disk outputs from a pipeline, 
+# this causes an issue when the Docker images for modules under src require more than 10GB of storage.
+# The self-hosted agent option allows the storage to be increased based on the VM size. This version 
+# includes extra clean-up and space management steps relating to docker builds, but it otherwise equivalent
+# to the .azuredevops/ado-ci-pipeline-ms-hosted.yml version.
+# For setting up a CI pipeline with a self-hosted Linux agent see:
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops
+# Note that the CI scripts that this pipeline runs (ci-tests.sh) is designed to be run on a Linux agent, 
+# but could be adapated to other OSs.
+
+
+trigger:
+  - main
+
+pool:
+  name: Default
+  demands:
+  - agent.name -equals mc-ubuntu-agent
+workspace:
+  clean: all
+  
+steps:
+  - script: |
+      docker image prune -f
+      docker container prune -f
+    displayName: "Docker Cleanup"
+
+  - script: |
+      df -h
+    displayName: "Check agent VM space"
+
+  - task: UsePythonVersion@0
+    displayName: "Use Python 3.9"
+    inputs:
+      versionSpec: 3.9
+
+  - script: |
+      python -m venv env
+      source env/bin/activate
+      python -m pip install --upgrade pip
+      pip install -r .azuredevops/requirements.txt
+    displayName: "Install requirements"
+
+  - task: UseDotNet@2
+    inputs: 
+      packageType: 'sdk'
+      workingDirectory: "src/"
+      version: '6.x'
+
+  - bash: |
+      source env/bin/activate
+      flake8 --max-line-length 88 --exclude env,notebooks
+    displayName: "Run flake8 tests"
+    
+  - bash: |
+      source env/bin/activate
+      bandit -r --configfile bandit.yml src notebooks
+    displayName: "Run bandit tests"
+
+  - task: Bash@3
+    inputs:
+      targetType: 'filePath'
+      filePath: ci-tests.sh
+    displayName: "Run pytest in docker containers"
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: "/tmp/artifact_output/**/test-results-*.xml"
+    condition: succeededOrFailed()
+
+  # Publish code coverage results
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: 'Cobertura' # Available options: 'JaCoCo', 'Cobertura'
+      summaryFileLocation: '/tmp/artifact_output/coverage.xml'
+      pathToSources: src/
+      #reportDirectory: # Optional
+      #additionalCodeCoverageFiles: # Optional
+      failIfCoverageEmpty: false # Optional
+
+  - bash: |
+      sudo rm -rfv /home/azureuser/myagent/_work/* /home/azureuser/myagent/_work/.* || true
+    displayName: "Clean-up _work dir"
+    condition: always()

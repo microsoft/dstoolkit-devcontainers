@@ -1,0 +1,39 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        description: "Black: The uncompromising Python code formatter"
+        entry: black
+        language: system
+        require_serial: true
+        types_or: [python, pyi]
+        # when updating black args, also update .vscode/settings.json to match
+      - id: isort
+        name: isort
+        entry: isort
+        require_serial: true
+        language: system
+        types_or: [cython, pyi, python]
+        args: [--profile, black]
+      - id: flake8
+        name: flake8
+        description: "`flake8` is a command-line utility for enforcing style consistency across Python projects."
+        entry: flake8
+        language: system
+        types: [python]
+        # when updating flake args, also update .vscode/settings.json to match
+        args: [--max-line-length=88]
+        # these below were brought in from outside and to keep the git history closer to the original
+        # and we don't intend to maintain overtime but use these as they are at this moment so excluding these
+        require_serial: true
+      - id: bandit
+        name: bandit
+        description: "Bandit is a tool for finding common security issues in Python code"
+        entry: bandit
+        language: system
+        types: [python]
+        require_serial: true
+        args: [-r, --configfile=bandit.yml]

@@ -1,0 +1,6 @@
+[run]
+omit = 
+    # ignore all notebooks in src
+    */notebooks/*
+    # ignore all tests in src
+    */tests/*

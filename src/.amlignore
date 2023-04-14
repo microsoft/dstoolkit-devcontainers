@@ -1,0 +1,15 @@
+**/outputs
+**/data
+**/logs
+**/tests
+**/__pycache__
+**/.mypy_cache
+**/.pytest_cache
+**/mlruns
+**/lightning_logs
+**/.vscode
+**/junit
+**/.azuredevops
+**/.venv
+**/venv
+**/*.md
