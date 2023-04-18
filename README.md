@@ -71,7 +71,41 @@ ssh-add
 1. Update `COPY sample_cpu_project/.devcontainer/requirements.txt` in `Dockerfile` with a new path
 1. Update other parts of `Dockerfile` if you need
 1. Update `requirements.txt` if you need
-1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
+1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container 
+
+## CI Pipeline
+
+This repository contains various templates for running a CI pipeline on either Azure Devops (under .azuredevops dir) or on Github Actions (under .github dir). Each of the CI pipeline configurations provided have the following features at a high level:
+- Run code quality checks including flake8 and bandit over the repository
+- Find all subdirectories under src and run all Pytest tests inside the associated Docker containers
+- Publish test results and code coverage statistics
+
+We recommend setting up pipeline triggers for PR merging and CI, this will ensure the pipeline runs when a PR is made or updated aswell as when a PR is merged into your main branch. See the sections belows for links on how to do this with Azure Devops and Github Actions.
+
+### Running all unit tests with ci-tests.sh
+As multiple independent directories can be added under src, each with its own Dockerfile and requirements, running unit tests for each directory under src needs to be done within the Docker container of each src subdirectory. The ci-tests.sh script automates this task of running all unit tests for the repository with the following steps:
+1. Finding all subdirectories under src/ that have at least one test_*.py under a tests folder
+2. Building each Docker image for each subdirectory with tests, using the Dockerfile in the associated .devcontainer directory
+3. For each subdirectory with tests, running Pytest for all tests inside the matching Docker container built in step 2
+4. All test results and coverage reports are combined for each individual src subdirectory that had tests and is made ready for publishing in a CI pipeline
+
+Note that the ci-test.sh can be run locally aswell and it is assumed that all tests are written with Pytest.
+
+### Azure Deveops CI Pipeline
+See https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops for how to setup a pipeline in Azure Devops. Note that to use the provided template in this repository, you will need to specify the path to .azuredevops/ado-ci-pipeline-ms-hosted during the pipeline setup process in Azure Devops.
+
+### Choosing between Azure Devops Microsoft-hosted vs Self-hosted CI Pipeline
+There are two templates for running a CI pipeline in Azure Devops, a pipeline configuration that uses a Microsoft hosted agent to run the pipeline (.azuredevops/ado-ci-pipeline-ms-hosted.yml) and a pipeline configuration that uses a self-hosted agent to run the pipeline (.azuredevops/ado-ci-pipeline-self-hosted.yml). 
+
+The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under src/ that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see this link for resource limitations of Microsoft hosted agents: https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at .azuredevops/ado-ci-pipeline-self-hosted.yml includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under src, running pytest within each of these containers and publishing test results and coverage information.
+
+### Github Actions CI Pipeline
+
+TODO
+
+## Future Roadmap and TODOs
+
+- Add Docker build caching to Azure Devops MS hosted CI pipeline
 
 ## Contributing
 
