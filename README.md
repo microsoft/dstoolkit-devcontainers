@@ -37,8 +37,6 @@ As the maintainer of this project, please make a few updates:
 
 ### Using SSH Keys in Dev Containers
 
-TODO: by Bhavik
-
 If you have connected to the origin repository using SSH authentication, you will need to do a bit of setup to reuse your local SSH key inside a devcontainer automatically, which will allow you to interact with the origin repository (git push, git pull etc.) inside the devcontainer.
 
 1. Try the recommendations in the official docs: https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
