@@ -1,27 +1,28 @@
 # Dev Containers for ML feasibility study with VS Code
 
-# TODO: this needs better explanation
-A comprehensive guide on how to set up a development environment using Dev Containers in Visual Studio Code. This project includes step-by-step instructions on how to install the necessary tools and extensions, how to use SSH keys in Dev Containers, and how to create a new directory under `src` with a new environment.  
+## Overview
 
-Features:
+This repository provides a VSCode dev-container based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) till production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
 
-- Easy to follow instructions for setting up a development environment using Dev Containers in Visual Studio Code
-- Includes instructions on how to use SSH keys in Dev Containers
-- Includes instructions on how to create a new directory under `src` with a new environment
-- Saves time and reduces errors by automating the setup process
+During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of devcontainers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU devcontainer setup as examples.
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+Another challenge you may face is each data scientist creating low quality codebase. That is fine during experimentation stage to keep the team agility high and maximize team’s experimentation throughput. But when you move to model productionization stage, you experience the big burden of bringing the code quality up to production level. With the power of python tools and VSCode extensions configured for this template on top of devcontainers, you can keep the code quality high automatically without losing team’s agility and experimentation throughput and ease the transition to productionization phase.
 
-As the maintainer of this project, please make a few updates:
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+### Features
 
+- Multi dev container samples (both CPU and GPU) with many common config steps already configured as following:
+  - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit on VSCode on save
+  - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit as precommit hook
+  - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same devcontainer
+  - Pre-configured VSCode extensions installed such as python, jupyter, shellcheck, code-spell-checker, git tools etc
+- Github Actions and Azure Devops CI pipelines that run isolated pytest for all devcontainers under src, including test result reporting and coverage reporting
+
+This template automates all tedious setup process as much as possible and saves time and reduces setup errors for the entire data scientist team.
 
 ## Getting Started
+
+This section provides a comprehensive guide on how to set up a development environment using Dev Containers in Visual Studio Code with step-by-step instructions.
 
 ### How to setup dev environment?
 
