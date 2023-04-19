@@ -6,9 +6,9 @@ name: pytorch_train_component
 description: Train a Pytorch model.
 version: 1
 
-code: /workspace/src
+code: /workspace/src/sample_pytorch_gpu_project
 command: >-
-  bash deep_learning/train.sh ${{inputs.data_dir}} ${{outputs.train_artifacts_dir}}
+  python train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size 4
 inputs:
   data_dir:
     type: uri_folder

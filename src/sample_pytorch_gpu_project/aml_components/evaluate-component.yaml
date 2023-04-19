@@ -6,9 +6,9 @@ name: pytorch_evaluate_component
 description: Evaluate metrics from model inference on test set.
 version: 1
 
-code: /workspace/src/deep_learning
+code: /workspace/src/sample_pytorch_gpu_project
 command: >-
-  python evaluate.py --preds_csv ${{inputs.inference_preds_dir}}/preds.csv --metadata_csv ${{inputs.metadata_csv}}
+  python evaluate.py --preds_csv ${{inputs.inference_preds_dir}}/preds.csv
 inputs:
   metadata_csv:
     type: uri_file
