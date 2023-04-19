@@ -37,6 +37,9 @@ def main(args):
     dict_args = vars(args)
     mlflow.autolog()
 
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(device)
+
     # replace this code with your own training code
     transform = transforms.Compose(
         [transforms.ToTensor(),
@@ -59,6 +62,7 @@ def main(args):
             'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
     
     net = Net()
+    net.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
@@ -66,7 +70,7 @@ def main(args):
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
             # get the inputs; data is a list of [inputs, labels]
-            inputs, labels = data
+            inputs, labels = data[0].to(device), data[1].to(device)
 
             # zero the parameter gradients
             optimizer.zero_grad()

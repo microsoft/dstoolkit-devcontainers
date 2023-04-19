@@ -10,11 +10,6 @@ jobs:
     type: command
     component: /workspace/src/sample_pytorch_gpu_project/aml_components/train-component.yaml
     compute: azureml:pytorch-gpu-cluster
-    inputs:
-      data_dir:
-        type: uri_folder
-        path: azureml://datastores/split_data_datastore/paths/3class_labels_iter01/
-        mode: download
     outputs:
       train_artifacts_dir: 
         type: uri_folder
@@ -24,10 +19,6 @@ jobs:
     component: /workspace/src/sample_pytorch_gpu_project/aml_components/inference-component.yaml
     compute: azureml:pytorch-gpu-cluster
     inputs:
-      data_dir:
-        type: uri_folder
-        path: azureml://datastores/split_data_datastore/paths/3class_labels_iter01/
-        mode: download
       train_artifacts_dir: ${{parent.jobs.train_component.outputs.train_artifacts_dir}}
     outputs:
       test_set_preds_dir: 
@@ -38,12 +29,8 @@ jobs:
     component: /workspace/src/sample_pytorch_gpu_project/aml_components/evaluate-component.yaml
     compute: azureml:pytorch-cpu-cluster 
     inputs:
-      metadata_csv:
-        type: uri_file
-        path: azureml://datastores/split_data_datastore/paths/3class_labels_iter01/test/test_metadata.csv
-        mode: download
       inference_preds_dir: ${{parent.jobs.inference_component.outputs.test_set_preds_dir}}
-identity:  # see README for detailed instructions on auth options and setup
+identity:
   # use with a managed identity assigned to compute cluster
   # type: managed_identity
   # use with user identity that is logged in to AML CLI
