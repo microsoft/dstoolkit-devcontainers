@@ -15,8 +15,8 @@ Another challenge you may face is each data scientist creating low quality codeb
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit as precommit hook
   - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same Dev Container
   - Pre-configured VSCode extensions installed such as python, jupyter, shellcheck, code-spell-checker, git tools etc
-- [Github Actions and Azure Devops CI pipelines](#ci-pipeline) that run linters (flake8 and bandit) and pytest with test result reporting and coverage reporting
-- Pull Request templates that helps you to write a good PR description for both Github and Azure Devops
+- [Github Actions and Azure DevOps CI pipelines](#ci-pipeline) that run linters (flake8 and bandit) and pytest with test result reporting and coverage reporting
+- Pull Request templates that helps you to write a good PR description for both Github and Azure DevOps
 
 This template automates all tedious setup process as much as possible and saves time and reduces setup errors for the entire data scientist team.
 
@@ -76,29 +76,34 @@ ssh-add
 
 ## CI Pipeline
 
-This repository contains templates for running a Continuous Integration (CI) pipeline on either Azure Devops (under `.azuredevops` dir) or on Github Actions (under `.github` dir). Each of the CI pipeline configurations provided have the following features at a high level:
+This repository contains templates for running a Continuous Integration (CI) pipeline on either Azure DevOps (under `.azuredevops` directory) or on Github Actions (under `.github` directory). Each of the CI pipeline configurations provided have the following features at a high level:
+
 - Run code quality checks including flake8 and bandit over the repository
 - Find all subdirectories under `src` and run all pytest tests inside the associated Docker containers
 - Publish test results and code coverage statistics
 
 We recommend setting up pipeline triggers for PR creation, editing and merging. This will ensure the pipeline runs continuously and will help catch any issues earlier in your development process.
 
-See the sections below for links on how to setup pipelines with [Azure Devops](#how-to-configure-azure-devops-ci-pipeline) and [Github Actions](#how-to-configure-github-actions-ci-pipeline). Note that if you are only using one of these platforms to host a pipeline (or neither), you can safely delete either (or both) the `.azuredevops` directory or the `.github` directory.
+See the sections below for links on how to setup pipelines with [Azure DevOps](#how-to-configure-azure-devops-ci-pipeline) and [Github Actions](#how-to-configure-github-actions-ci-pipeline). Note that if you are only using one of these platforms to host a pipeline (or neither), you can safely delete either (or both) the `.azuredevops` directory or the `.github` directory.
 
 ### Running all unit tests with `ci-tests.sh`
+
 As multiple independent directories can be added under `src`, each with its own Dockerfile and requirements, running unit tests for each directory under `src` needs to be done within the Docker container of each `src` subdirectory. The `ci-tests.sh` script automates this task of running all unit tests for the repository with the following steps:
+
 1. Finds all subdirectories under `src` that have at least one `test_*.py` under a `tests` folder
 2. Builds each Docker image for each subdirectory with tests, using the Dockerfile in the associated `.devcontainer` directory
 3. Runs pytest for each subdirectory with tests, inside the matching Docker container built in step 2
-4. Combine all test results and coverage reports from step 3, with reports in a valid format for publishing in either Azure Devops or Github Actions hosted pipeline
+4. Combine all test results and coverage reports from step 3, with reports in a valid format for publishing in either Azure DevOps or Github Actions hosted pipeline
 
 Note that the `ci-test.sh` script can be run locally as well and it is assumed that all tests are written with pytest.
 
-### How to configure Azure Devops CI Pipeline
-See https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops for how to setup a pipeline in Azure Devops. Note that to use the provided template in this repository, you will need to specify the path to `.azuredevops/ado-ci-pipeline-ms-hosted.yml` during the pipeline setup process in Azure Devops.
+### How to Configure Azure DevOps CI Pipeline
 
-#### Choosing between Azure Devops Microsoft-hosted vs Self-hosted CI Pipeline
-There are two templates for running a CI pipeline in Azure Devops, a pipeline configuration that uses a Microsoft hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-ms-hosted.yml`) and a pipeline configuration that uses a self-hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-self-hosted.yml`). 
+See https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops for how to setup a pipeline in Azure DevOps. Note that to use the provided template in this repository, you will need to specify the path to `.azuredevops/ado-ci-pipeline-ms-hosted.yml` during the pipeline setup process in Azure DevOps.
+
+#### Choosing between Azure DevOps Microsoft-hosted vs Self-hosted CI Pipeline
+
+There are two templates for running a CI pipeline in Azure DevOps, a pipeline configuration that uses a Microsoft hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-ms-hosted.yml`) and a pipeline configuration that uses a self-hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-self-hosted.yml`).
 
 The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under `src` that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see this link for resource limitations of Microsoft hosted agents: https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at `.azuredevops/ado-ci-pipeline-self-hosted.yml` includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under `src`, running pytest within each of these containers and publishing test results and coverage information.
 
@@ -118,7 +123,7 @@ on:
 
 ## Future Roadmap and TODOs
 
-- Add Docker build caching to Azure Devops MS hosted CI pipeline
+- Add Docker build caching to Azure DevOps MS hosted CI pipeline
 - Add tensorflow GPU example
 
 ## Contributing
@@ -137,8 +142,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
