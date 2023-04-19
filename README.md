@@ -100,13 +100,24 @@ There are two templates for running a CI pipeline in Azure Devops, a pipeline co
 
 The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under src/ that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see this link for resource limitations of Microsoft hosted agents: https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at .azuredevops/ado-ci-pipeline-self-hosted.yml includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under src, running pytest within each of these containers and publishing test results and coverage information.
 
-### Github Actions CI Pipeline
+### How to Configure Github Actions CI Pipeline
 
-TODO
+Github Actions CI pipeline is defined in `.github/workflows/ci.yaml`. As long as this repository is hosted in github, the pipeline will be automatically triggered when a PR is made or updated as well as when a PR is merged into your main branch with the setting below, so **no additional setting is required**.
+
+```yaml
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+```
 
 ## Future Roadmap and TODOs
 
 - Add Docker build caching to Azure Devops MS hosted CI pipeline
+- Add tensorflow GPU example
 
 ## Contributing
 
