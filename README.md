@@ -4,10 +4,9 @@
 
 This repository provides a VSCode Dev Container based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) till production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
 
-During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of Dev Containers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU Dev Container setup as examples.
+During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of Dev Containers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU Dev Container setup as examples. To support multiple different ML approaches with different python environments to be experimented in one project, this solution allows multiple different Dev Containers to be used in one repository while having "common" module that will be installed into all Dev Container to enable code reuse across different Dev Containers.
 
 Another challenge you may face is each data scientist creating low quality codebase. That is fine during experimentation stage to keep the team agility high and maximize team’s experimentation throughput. But when you move to model productionization stage, you experience the big burden of bringing the code quality up to production level. With the power of python tools and VSCode extensions configured for this template on top of Dev Containers, you can keep the code quality high automatically without losing team’s agility and experimentation throughput and ease the transition to productionization phase.
-
 
 ### Features
 
@@ -16,7 +15,8 @@ Another challenge you may face is each data scientist creating low quality codeb
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit as precommit hook
   - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same Dev Container
   - Pre-configured VSCode extensions installed such as python, jupyter, shellcheck, code-spell-checker, git tools etc
-- Github Actions and Azure Devops CI pipelines that run isolated pytest for all Dev Containers under src, including test result reporting and coverage reporting
+- [Github Actions and Azure Devops CI pipelines](#ci-pipeline) that run linters (flake8 and bandit) and pytest with test result reporting and coverage reporting
+- Pull Request templates that helps you to write a good PR description for both Github and Azure Devops
 
 This template automates all tedious setup process as much as possible and saves time and reduces setup errors for the entire data scientist team.
 
@@ -81,7 +81,7 @@ This repository contains various templates for running a CI pipeline on either A
 - Find all subdirectories under src and run all Pytest tests inside the associated Docker containers
 - Publish test results and code coverage statistics
 
-We recommend setting up pipeline triggers for PR merging and CI, this will ensure the pipeline runs when a PR is made or updated aswell as when a PR is merged into your main branch. See the sections belows for links on how to do this with Azure Devops and Github Actions.
+We recommend setting up pipeline triggers for PR merging and CI, this will ensure the pipeline runs when a PR is made or updated as well as when a PR is merged into your main branch. See the sections below for links on how to do this with Azure Devops and Github Actions.
 
 ### Running all unit tests with ci-tests.sh
 As multiple independent directories can be added under src, each with its own Dockerfile and requirements, running unit tests for each directory under src needs to be done within the Docker container of each src subdirectory. The ci-tests.sh script automates this task of running all unit tests for the repository with the following steps:
@@ -90,7 +90,7 @@ As multiple independent directories can be added under src, each with its own Do
 3. For each subdirectory with tests, running Pytest for all tests inside the matching Docker container built in step 2
 4. All test results and coverage reports are combined for each individual src subdirectory that had tests and is made ready for publishing in a CI pipeline
 
-Note that the ci-test.sh can be run locally aswell and it is assumed that all tests are written with Pytest.
+Note that the ci-test.sh can be run locally as well and it is assumed that all tests are written with Pytest.
 
 ### Azure Deveops CI Pipeline
 See https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops for how to setup a pipeline in Azure Devops. Note that to use the provided template in this repository, you will need to specify the path to .azuredevops/ado-ci-pipeline-ms-hosted during the pipeline setup process in Azure Devops.
