@@ -2,11 +2,11 @@
 
 ## Overview
 
-This repository provides a VSCode dev-container based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) till production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
+This repository provides a VSCode Dev Container based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) till production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
 
-During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of devcontainers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU devcontainer setup as examples.
+During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of Dev Containers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU Dev Container setup as examples.
 
-Another challenge you may face is each data scientist creating low quality codebase. That is fine during experimentation stage to keep the team agility high and maximize team’s experimentation throughput. But when you move to model productionization stage, you experience the big burden of bringing the code quality up to production level. With the power of python tools and VSCode extensions configured for this template on top of devcontainers, you can keep the code quality high automatically without losing team’s agility and experimentation throughput and ease the transition to productionization phase.
+Another challenge you may face is each data scientist creating low quality codebase. That is fine during experimentation stage to keep the team agility high and maximize team’s experimentation throughput. But when you move to model productionization stage, you experience the big burden of bringing the code quality up to production level. With the power of python tools and VSCode extensions configured for this template on top of Dev Containers, you can keep the code quality high automatically without losing team’s agility and experimentation throughput and ease the transition to productionization phase.
 
 
 ### Features
@@ -14,9 +14,9 @@ Another challenge you may face is each data scientist creating low quality codeb
 - Multi dev container samples (both CPU and GPU) with many common config steps already configured as following:
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit on VSCode on save
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit as precommit hook
-  - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same devcontainer
+  - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same Dev Container
   - Pre-configured VSCode extensions installed such as python, jupyter, shellcheck, code-spell-checker, git tools etc
-- Github Actions and Azure Devops CI pipelines that run isolated pytest for all devcontainers under src, including test result reporting and coverage reporting
+- Github Actions and Azure Devops CI pipelines that run isolated pytest for all Dev Containers under src, including test result reporting and coverage reporting
 
 This template automates all tedious setup process as much as possible and saves time and reduces setup errors for the entire data scientist team.
 
@@ -38,12 +38,12 @@ This section provides a comprehensive guide on how to set up a development envir
 
 ### Using SSH Keys in Dev Containers
 
-If you have connected to the origin repository using SSH authentication, you will need to do a bit of setup to reuse your local SSH key inside a devcontainer automatically, which will allow you to interact with the origin repository (git push, git pull etc.) inside the devcontainer.
+If you have connected to the origin repository using SSH authentication, you will need to do a bit of setup to reuse your local SSH key inside a Dev Container automatically, which will allow you to interact with the origin repository (git push, git pull etc.) inside the Dev Container.
 
 1. Try the recommendations in the official docs: https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
 1. If the previous step doesn't work, try the below method, that includes a bit of additional code to add keys to the SSH agent.
 
-Add the following to your ~/.bash_profile or ~/.profile or ~/.zprofile (by default most WSL users will have only a ~/.profile) so an ssh-agent will be started when needed and default keys will be added to the agent. The ssh-agent will then automatically forward keys to your devcontainer when its launched.
+Add the following to your ~/.bash_profile or ~/.profile or ~/.zprofile (by default most WSL users will have only a ~/.profile) so an ssh-agent will be started when needed and default keys will be added to the agent. The ssh-agent will then automatically forward keys to your Dev Container when its launched.
 
 ```sh
 # this part taken from https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
