@@ -90,6 +90,7 @@ def main(args):
     print('Finished Training')
 
     # save model
+    args.train_artifacts_dir.mkdir(parents=True, exist_ok=True)
     torch.save(net.state_dict(), args.train_artifacts_dir / 'cifar_net.pth')
     print(f"Model saved to {args.train_artifacts_dir / 'cifar_net.pth'}")
 

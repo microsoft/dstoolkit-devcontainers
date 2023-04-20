@@ -36,6 +36,7 @@ def main(args):
     correct = 0
     total = 0
     combined_predictions = []
+    combined_labels = []
     # since we're not training, we don't need to calculate the gradients for our outputs
     with torch.no_grad():
         for data in testloader:
@@ -45,27 +46,28 @@ def main(args):
             # the class with the highest energy is what we choose as prediction
             _, predicted = torch.max(outputs.data, 1)
             combined_predictions.extend(predicted.tolist())
+            combined_labels.extend(labels.tolist())
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
     print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
 
-    # save predictions CSV
-    df_preds = pd.DataFrame(combined_predictions)
+    # save predictions CSV to output directory
+    df_preds = pd.DataFrame({'label': combined_labels, 'prediction': combined_predictions})
     df_preds.to_csv(args.preds_dir / "preds.csv", index=False)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--train_artifacts_dir",
+        type=Path,
+        help="Directory where trained model is saved",
+    )
+    parser.add_argument(
         "--preds_dir",
         type=Path,
         help="Output folder containing test set predictions CSV file (preds.csv)",
-    )
-    parser.add_argument(
-        "--train_artifacts_dir",
-        type=Path,
-        help="dir where trained model exists",
     )
     args = parser.parse_args()
     main(args)
