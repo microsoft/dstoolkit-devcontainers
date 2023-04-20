@@ -1,11 +1,12 @@
 import argparse
 from pathlib import Path
-from train import Net
+
 import mlflow
+import pandas as pd
 import torch
 import torchvision
 import torchvision.transforms as transforms
-import pandas as pd
+from train import Net
 
 
 def main(args):
@@ -15,22 +16,16 @@ def main(args):
     mlflow.autolog()
 
     net = Net()
-    net.load_state_dict(torch.load(args.train_artifacts_dir / 'cifar_net.pth'))
+    net.load_state_dict(torch.load(args.train_artifacts_dir / "cifar_net.pth"))
 
     transform = transforms.Compose(
-        [transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+    )
     testset = torchvision.datasets.CIFAR10(
-        root='./data', 
-        train=False,
-        download=True,
-        transform=transform
+        root="./data", train=False, download=True, transform=transform
     )
     testloader = torch.utils.data.DataLoader(
-        testset, 
-        batch_size=2,
-        shuffle=False, 
-        num_workers=2
+        testset, batch_size=2, shuffle=False, num_workers=2
     )
 
     correct = 0
@@ -50,10 +45,14 @@ def main(args):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
+    print(
+        f"Accuracy of the network on the 10000 test images: {100 * correct // total} %"
+    )
 
     # save predictions CSV to output directory
-    df_preds = pd.DataFrame({'label': combined_labels, 'prediction': combined_predictions})
+    df_preds = pd.DataFrame(
+        {"label": combined_labels, "prediction": combined_predictions}
+    )
     df_preds.to_csv(args.preds_dir / "preds.csv", index=False)
 
 
