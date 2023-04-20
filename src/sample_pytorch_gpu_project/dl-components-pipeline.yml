@@ -24,12 +24,6 @@ jobs:
       test_set_preds_dir: 
         type: uri_folder
         mode: rw_mount
-  evaluate_component:
-    type: command
-    component: /workspace/src/sample_pytorch_gpu_project/aml_components/evaluate-component.yaml
-    compute: azureml:pytorch-cpu-cluster 
-    inputs:
-      inference_preds_dir: ${{parent.jobs.inference_component.outputs.test_set_preds_dir}}
 identity:
   # use with a managed identity assigned to compute cluster
   # type: managed_identity
