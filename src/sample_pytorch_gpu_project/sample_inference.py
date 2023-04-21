@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from train import Net
+from sample_train import Net
 
 
 def main(args):
@@ -47,8 +47,10 @@ def main(args):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    accuracy = correct // total
-    print(f"Accuracy of the network on the 10000 test images: {100* accuracy} %")
+    accuracy = correct / total
+    print(
+        f"Accuracy of the network on the 10000 test images: {100 * accuracy // 1.0} %"
+    )
     mlflow.log_metric("test_accuracy", accuracy)
 
     # save predictions CSV to output directory
@@ -64,11 +66,13 @@ if __name__ == "__main__":
         "--train_artifacts_dir",
         type=Path,
         help="Directory where trained model is saved",
+        default=Path("outputs"),
     )
     parser.add_argument(
         "--preds_dir",
         type=Path,
         help="Output folder containing test set predictions CSV file (preds.csv)",
+        default=Path("outputs"),
     )
     args = parser.parse_args()
     main(args)
