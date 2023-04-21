@@ -8,7 +8,11 @@ version: 1
 
 code: /workspace/src/sample_pytorch_gpu_project
 command: >-
-  python train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size 4
+  python sample_train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size ${{inputs.batch_size}}
+inputs:
+  batch_size:
+    type: integer
+    default: 4
 outputs:
   train_artifacts_dir:
     type: uri_folder
