@@ -36,7 +36,6 @@ def main(args):
     print(
         "\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items()))
     )
-    # dict_args = vars(args)
     mlflow.autolog()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

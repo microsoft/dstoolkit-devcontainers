@@ -10,8 +10,6 @@ code: /workspace/src/sample_pytorch_gpu_project
 command: >-
   python inference.py --train_artifacts_dir ${{inputs.train_artifacts_dir}} --preds_dir ${{outputs.test_set_preds_dir}}
 inputs:
-  data_dir:
-    type: uri_folder
   train_artifacts_dir:
     type: uri_folder
 outputs:
