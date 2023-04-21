@@ -36,7 +36,10 @@ def main(args):
     print(
         "\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items()))
     )
+    dict_args = vars(args)
+    args.train_artifacts_dir.mkdir(parents=True, exist_ok=True)
     mlflow.autolog()
+    mlflow.log_params(dict_args)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -73,6 +76,7 @@ def main(args):
 
     for epoch in range(2):  # loop over the dataset multiple times
         running_loss = 0.0
+        epoch_loss = 0.0
         for i, data in enumerate(trainloader, 0):
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data[0].to(device), data[1].to(device)
@@ -88,14 +92,17 @@ def main(args):
 
             # print statistics
             running_loss += loss.item()
+            epoch_loss += loss.item()
             if i % 2000 == 1999:  # print every 2000 mini-batches
                 print(f"[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}")
                 running_loss = 0.0
 
+        epoch_loss = epoch_loss / ((epoch + 1) * len(trainloader))
+        mlflow.log_metric("Training Loss", epoch_loss, step=epoch)
+
     print("Finished Training")
 
     # save model
-    args.train_artifacts_dir.mkdir(parents=True, exist_ok=True)
     torch.save(net.state_dict(), args.train_artifacts_dir / "cifar_net.pth")
     print(f"Model saved to {args.train_artifacts_dir / 'cifar_net.pth'}")
 

@@ -13,7 +13,9 @@ def main(args):
     print(
         "\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items()))
     )
+    dict_args = vars(args)
     mlflow.autolog()
+    mlflow.log_params(dict_args)
 
     net = Net()
     net.load_state_dict(torch.load(args.train_artifacts_dir / "cifar_net.pth"))
@@ -45,9 +47,9 @@ def main(args):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    print(
-        f"Accuracy of the network on the 10000 test images: {100 * correct // total} %"
-    )
+    accuracy = correct // total
+    print(f"Accuracy of the network on the 10000 test images: {100* accuracy} %")
+    mlflow.log_metric("test_accuracy", accuracy)
 
     # save predictions CSV to output directory
     df_preds = pd.DataFrame(
