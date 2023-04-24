@@ -5,8 +5,6 @@
 **/__pycache__
 **/.mypy_cache
 **/.pytest_cache
-**/mlruns
-**/lightning_logs
 **/.vscode
 **/junit
 **/.azuredevops
