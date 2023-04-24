@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from sample_train import Net
+from train import Net
 
 
 def main(args):
