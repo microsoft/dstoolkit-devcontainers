@@ -8,7 +8,7 @@ version: 1
 
 code: /workspace/src/sample_pytorch_gpu_project
 command: >-
-  python sample_inference.py --train_artifacts_dir ${{inputs.train_artifacts_dir}} --preds_dir ${{outputs.test_set_preds_dir}}
+  python aml_example/inference.py --train_artifacts_dir ${{inputs.train_artifacts_dir}} --preds_dir ${{outputs.test_set_preds_dir}}
 inputs:
   train_artifacts_dir:
     type: uri_folder

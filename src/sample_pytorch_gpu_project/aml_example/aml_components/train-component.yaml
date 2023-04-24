@@ -8,7 +8,7 @@ version: 1
 
 code: /workspace/src/sample_pytorch_gpu_project
 command: >-
-  python sample_train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size ${{inputs.batch_size}}
+  python aml_example/train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size ${{inputs.batch_size}}
 inputs:
   batch_size:
     type: integer
