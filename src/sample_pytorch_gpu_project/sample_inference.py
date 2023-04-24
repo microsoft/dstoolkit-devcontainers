@@ -11,7 +11,7 @@ from sample_train import Net
 
 def main(args):
     print(
-        "\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items()))
+        "\n".join(f"{k}: {v}" for k, v in sorted(dict(vars(args)).items()))
     )
     dict_args = vars(args)
     mlflow.autolog()

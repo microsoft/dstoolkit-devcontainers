@@ -34,7 +34,7 @@ class Net(nn.Module):
 def main(args):
     # keep this setup code
     print(
-        "\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items()))
+        "\n".join(f"{k}: {v}" for k, v in sorted(dict(vars(args)).items()))
     )
     dict_args = vars(args)
     args.train_artifacts_dir.mkdir(parents=True, exist_ok=True)
