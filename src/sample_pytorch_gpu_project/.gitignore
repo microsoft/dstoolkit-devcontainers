@@ -1,5 +1,2 @@
 mlruns
 outputs
-*.csv
-runs
-train_artifacts
