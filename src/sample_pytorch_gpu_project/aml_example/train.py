@@ -42,7 +42,7 @@ def main(args):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
 
-    # replace this code with your own training code
+    # code below this comment is a sample only, replace with your own training code
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     )
@@ -60,9 +60,9 @@ def main(args):
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
     for epoch in range(2):  # loop over the dataset multiple times
-        running_loss = 0.0
+        mini_batch_loss = 0.0
         epoch_loss = 0.0
-        for i, data in enumerate(trainloader, 0):
+        for i, data in enumerate(trainloader):
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data[0].to(device), data[1].to(device)
 
@@ -76,13 +76,14 @@ def main(args):
             optimizer.step()
 
             # print statistics
-            running_loss += loss.item()
+            mini_batch_loss += loss.item()
             epoch_loss += loss.item()
-            if i % 2000 == 1999:  # print every 2000 mini-batches
-                print(f"[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}")
-                running_loss = 0.0
+            if (i + 1) % 2000 == 0:  # print every 2000 mini-batches
+                print(f"[{epoch + 1}, {i + 1:5d}] loss: {mini_batch_loss / 2000:.3f}")
+                mini_batch_loss = 0.0
 
-        epoch_loss = epoch_loss / ((epoch + 1) * len(trainloader))
+        epoch_loss = epoch_loss / len(trainloader)
+        print(f"Epoch {epoch + 1} loss: {epoch_loss:.3f}")
         mlflow.log_metric("Training Loss", epoch_loss, step=epoch)
 
     print("Finished Training")
