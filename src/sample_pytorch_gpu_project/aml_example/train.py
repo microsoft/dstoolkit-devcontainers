@@ -61,7 +61,7 @@ def main(args):
 
     for epoch in range(2):  # loop over the dataset multiple times
         mini_batch_loss = 0.0
-        epoch_loss = 0.0
+        mini_batch_count = 0
         for i, data in enumerate(trainloader):
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data[0].to(device), data[1].to(device)
@@ -77,14 +77,13 @@ def main(args):
 
             # print statistics
             mini_batch_loss += loss.item()
-            epoch_loss += loss.item()
             if (i + 1) % 2000 == 0:  # print every 2000 mini-batches
                 print(f"[{epoch + 1}, {i + 1:5d}] loss: {mini_batch_loss / 2000:.3f}")
+                mlflow.log_metric(
+                    "Training Loss", mini_batch_loss / 2000, step=mini_batch_count + 1
+                )
                 mini_batch_loss = 0.0
-
-        epoch_loss = epoch_loss / len(trainloader)
-        print(f"Epoch {epoch + 1} loss: {epoch_loss:.3f}")
-        mlflow.log_metric("Training Loss", epoch_loss, step=epoch)
+                mini_batch_count += 1
 
     print("Finished Training")
 
