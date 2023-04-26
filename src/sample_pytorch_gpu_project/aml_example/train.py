@@ -33,9 +33,7 @@ class Net(nn.Module):
 
 def main(args):
     # keep this setup code
-    print(
-        "\n".join(f"{k}: {v}" for k, v in sorted(dict(vars(args)).items()))
-    )
+    print("\n".join(f"{k}: {v}" for k, v in sorted(dict(vars(args)).items())))
     dict_args = vars(args)
     args.train_artifacts_dir.mkdir(parents=True, exist_ok=True)
     mlflow.autolog()
@@ -55,19 +53,6 @@ def main(args):
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=args.batch_size, shuffle=True, num_workers=2
     )
-
-    # classes = (
-    #     "plane",
-    #     "car",
-    #     "bird",
-    #     "cat",
-    #     "deer",
-    #     "dog",
-    #     "frog",
-    #     "horse",
-    #     "ship",
-    #     "truck",
-    # )
 
     net = Net()
     net.to(device)
