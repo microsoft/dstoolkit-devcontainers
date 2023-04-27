@@ -24,10 +24,9 @@ repos:
         entry: flake8
         language: system
         types: [python]
-        # when updating flake args, also update .vscode/settings.json to match
-        args: [--max-line-length=88, --exclude=notebooks]
-        # these below were brought in from outside and to keep the git history closer to the original
-        # and we don't intend to maintain overtime but use these as they are at this moment so excluding these
+        # when updating flake args, also update .vscode/settings.json or "python.linting.flake8Args" in devcontainer.json to match
+        args: [--max-line-length=88]
+        exclude: ^notebooks
         require_serial: true
       - id: bandit
         name: bandit
