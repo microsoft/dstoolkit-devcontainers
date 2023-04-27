@@ -20,6 +20,62 @@ Another challenge you may face is each data scientist creating low quality codeb
 
 This template automates all tedious setup process as much as possible and saves time and reduces setup errors for the entire data scientist team.
 
+## Directory Structure
+
+This section gives you overview of the directory structure of this template. Only essential files are covered in this structure graph for simplicity. The directory structure is as follows:
+
+```bash
+.
+├── .azuredevops                   # CI pipelines for Azure DevOps. Details at section: How to Configure Azure DevOps CI Pipeline 
+├── .github                        # CI pipelines for Github Actions. Details at section: How to Configure Github Actions CI Pipeline 
+├── .pre-commit-config.yaml        # pre-commit config file with formatting and linting. Setup is covered in Section: Getting Started
+├── .env.example                   # Example of .env file. Setup is covered in Section: Getting Started
+├── bandit.yml                     # Setting file for bandit, security linter
+├── ci-tests.sh                    # Details at Section: Running all unit tests with ci-tests.sh
+├── data                           # Directory to keep your data for local training etc. This directory is gitignored 
+├── notebooks                      # Setup process is covered in Section: How to setup dev environment?
+│   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
+│   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
+│   │   ├── docker-compose.yml     # referred in devcontainer.json
+│   │   ├── Dockerfile             # referred in docker-compose.yml
+│   │   └── requirements.txt       # includes python package list for notebooks. used in Dockerfile
+│   └── sample_notebook.py         # example of interactive python script
+├── pytest.ini                     # Setting file for pytest
+└── src
+    ├── common                     # this module is accessible from all modules under src. put functions  you want to import across the projects here
+    │   └── requirements.txt       # python package list for common module. installed in all Dockerfile under src. python tools for src goes to here too
+    ├── sample_cpu_project         # cpu project example. Setup process is covered in Section: How to setup dev environment?
+    │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
+    │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
+    │   │   ├── docker-compose.yml # referred in devcontainer.json
+    │   │   ├── Dockerfile         # referred in docker-compose.yml. Supports only CPU
+    │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
+    │   ├── sample_main.py         
+    │   └── tests                  # pytest scripts for sample_cpu_project goes here
+    │       └── test_dummy.py      # pytest script example
+    └── sample_pytorch_gpu_project # gpu project example with pytorch. Setup process is covered in Section: How to setup dev environment?
+        ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
+        │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
+        │   ├── docker-compose.yml # referred in devcontainer.json
+        │   ├── Dockerfile         # referred in docker-compose.yml. Supports GPU
+        │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
+        ├── sample_main.py
+        └── tests                  # pytest scripts for sample_pytorch_gpu_project goes here
+            └── test_dummy.py      # pytest script example
+```
+
+### `notebooks` directory vs `src` directory
+
+There are two places to put python scripts/modules in this template. The `notebooks` directory is for experimental or throw-away python scripts and jupyter notebooks that you want to run cell by cell interactively. For example, EDA, one-off visualization codes, new model approaches you are not certain yet if you want to maintain over time typically go to this directory. The `src` directory is for python scripts and modules that you want to reuse and maintain over time. The `src` directory is also where you would put unit tests (typically under a `src/your_module/tests` directory).
+
+Given the nature of each directory's responsibility, there is also a different quality governance required. One big difference is that pre-commit hooks and CI pipelines run flake8 over `src` but not over `notebooks` (black, isort and bandit still run for both). For scripts in `notebooks`, we recommend you use [interactive python scripts](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) where you can have jupyter-like code cells within `.py` files rather than jupyter notebooks `.ipynb`. Interactive python files gives you the following benefits:
+
+- Comes with full benefits of python extension in VSCode such as code completion, linting, auto formatting, debugging etc
+- pre-commit hooks and CI pipelines will work as they run over `.py` files (but not `.ipynb` files)
+- Python file format is easier to review during a pull request review
+
+Interactive python scripts and jupyter notebooks are interchangeable as described in [Convert Jupyter notebooks to Python code file](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) so you can switch between them easily too if you want to use both formats during the development.
+
 ## Getting Started
 
 This section provides a comprehensive guide on how to set up a development environment using Dev Containers in Visual Studio Code with step-by-step instructions.
@@ -29,8 +85,8 @@ This section provides a comprehensive guide on how to set up a development envir
 1. Install [Visual Studio Code](https://code.visualstudio.com/)
 1. If your team has a commercial license for Docker Desktop, follow [VS Code Remote Containers | Docker Desktop](https://code.visualstudio.com/docs/remote/containers#_installation). Otherwise, go to [VS Code Remote Containers | Rancher Desktop Docs](https://docs.rancherdesktop.io/how-to-guides/vs-code-remote-containers/) and finish the first step (Install and launch Rancher Desktop. Select dockerd (moby) as the Container Runtime from the Kubernetes Settings menu.)
 1. Install [VSCode Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) on vscode
-1. Copy `.env.example` and rename it to `.env`. This is where you store your credentials etc. `.env` is automatically loaded into dev container as environment variables. When you add new environment variables `.env`, update `.env.example` as well to share that with others but don't include any credentials there. `.env` is gitignored so your credentials in that file won't be accidentally committed.
-1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the `notebooks` directory
+1. **If you forget this step, you will get an error when you try to build the container so make sure you have `.env` at root of this directory before you move on to the next step.**. Copy `.env.example` and rename it to `.env`. This is where you store your credentials etc. `.env` is automatically loaded into dev container as environment variables. When you add new environment variables `.env`, update `.env.example` as well to share that with others but don't include any credentials there. `.env` is gitignored so your credentials in that file won't be accidentally committed.
+1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the `notebooks` directory.
 1. VS Code will then build and start up a container, connect this window to service `notebooks`, and install VS Code extensions specified in `notebooks/.devcontainer/devcontainer.json`.
 1. Run `pre-commit install` in vscode terminal within dev container you just opened. This will setup your git precommit hook. This needs to run only once in the project and you don't need to rerun this every container rebuild.
 1. Now set up is done. If you want to develop in another directory for example under `src`, run `Dev Containers: Open Folder in Container...` and go to that directory that has `.devcontainer` and that will setup an dev environment for that directory.
@@ -72,7 +128,7 @@ ssh-add
 1. Update `COPY sample_cpu_project/.devcontainer/requirements.txt` in `Dockerfile` with a new path
 1. Update other parts of `Dockerfile` if you need
 1. Update `requirements.txt` if you need
-1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container 
+1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
 
 ## CI Pipeline
 
