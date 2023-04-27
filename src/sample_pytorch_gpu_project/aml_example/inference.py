@@ -10,9 +10,7 @@ from train import Net
 
 
 def main(args):
-    print(
-        "\n".join(f"{k}: {v}" for k, v in sorted(dict(vars(args)).items()))
-    )
+    print("\n".join(f"{k}: {v}" for k, v in sorted(dict(vars(args)).items())))
     dict_args = vars(args)
     mlflow.autolog()
     mlflow.log_params(dict_args)
@@ -41,7 +39,7 @@ def main(args):
             # calculate outputs by running images through the network
             outputs = net(images)
             # the class with the highest energy is what we choose as prediction
-            _, predicted = torch.max(outputs.data, 1)
+            predicted = torch.argmax(outputs.detach(), 1)
             combined_predictions.extend(predicted.tolist())
             combined_labels.extend(labels.tolist())
             total += labels.size(0)
