@@ -10,11 +10,13 @@ from train import Net
 
 
 def main(args):
+    # keep this setup code
     print("\n".join(f"{k}: {v}" for k, v in sorted(dict(vars(args)).items())))
     dict_args = vars(args)
     mlflow.autolog()
     mlflow.log_params(dict_args)
 
+    # code below this comment is a sample only, replace with your own training code
     net = Net()
     net.load_state_dict(torch.load(args.train_artifacts_dir / "cifar_net.pth"))
 
