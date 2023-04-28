@@ -43,6 +43,8 @@ def main(args):
     print(device)
 
     # code below this comment is a sample only, replace with your own training code
+
+    # transforms.Normalize() uses Imagenet means and stds
     transform = transforms.Compose(
         [
             transforms.ToTensor(),
