@@ -6,9 +6,9 @@ name: pytorch_inference_component
 description: Get best model from training run and do inference on the test set.
 version: 1
 
-code: /workspace/src/sample_pytorch_gpu_project
+code: /workspace/src
 command: >-
-  python inference.py --train_artifacts_dir ${{inputs.train_artifacts_dir}} --preds_dir ${{outputs.test_set_preds_dir}}
+  python sample_pytorch_gpu_project/inference.py --train_artifacts_dir ${{inputs.train_artifacts_dir}} --preds_dir ${{outputs.test_set_preds_dir}}
 inputs:
   train_artifacts_dir:
     type: uri_folder

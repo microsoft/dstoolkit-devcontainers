@@ -6,9 +6,9 @@ name: pytorch_train_component
 description: Train a Pytorch model.
 version: 1
 
-code: /workspace/src/sample_pytorch_gpu_project
+code: /workspace/src
 command: >-
-  python train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size ${{inputs.batch_size}}
+  python sample_pytorch_gpu_project/train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size ${{inputs.batch_size}}
 inputs:
   batch_size:
     type: integer
