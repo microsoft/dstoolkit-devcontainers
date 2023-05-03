@@ -1,6 +1,23 @@
 # Dev Containers for ML feasibility study with VS Code
 
-## Overview
+## Table of Contents
+
+0. [Introduction and Overview](#introduction-and-overview)
+ 1. [Features](#features)
+1. [Getting Started](#getting-started)
+2. [How to create a new directory under src with a new environment?](#how-to-create-a-new-directory-under-src-with-a-new-environment)
+3. [Github Actions and Azure DevOps CI pipelines](#ci-pipeline)
+  1. [Running all unit tests with ci-tests.sh](#running-all-unit-tests-with-ci-testssh)
+  2. [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
+  3. [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
+4. [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
+5. [Directory Structure](#directory-structure)
+  1. [notebooks directory vs src directory](#notebooks-directory-vs-src-directory)
+6. [Future Roadmap and TODOs](#future-roadmap-and-todos)
+7. [Contributing](#contributing)
+8. [Trademarks](#trademarks)
+
+## Introduction and Overview
 
 This repository provides a VSCode Dev Container based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) until production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
 
@@ -71,13 +88,13 @@ Note that the `ci-test.sh` script can be run locally as well and it is assumed t
 
 ### How to Configure Azure DevOps CI Pipeline
 
-See https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops for how to setup a pipeline in Azure DevOps. Note that to use the provided template in this repository, you will need to specify the path to `.azuredevops/ado-ci-pipeline-ms-hosted.yml` during the pipeline setup process in Azure DevOps.
+See <https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops> for how to setup a pipeline in Azure DevOps. Note that to use the provided template in this repository, you will need to specify the path to `.azuredevops/ado-ci-pipeline-ms-hosted.yml` during the pipeline setup process in Azure DevOps.
 
 #### Choosing between Azure DevOps Microsoft-hosted vs Self-hosted CI Pipeline
 
 There are two templates for running a CI pipeline in Azure DevOps, a pipeline configuration that uses a Microsoft hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-ms-hosted.yml`) and a pipeline configuration that uses a self-hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-self-hosted.yml`).
 
-The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under `src` that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see this link for resource limitations of Microsoft hosted agents: https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at `.azuredevops/ado-ci-pipeline-self-hosted.yml` includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under `src`, running pytest within each of these containers and publishing test results and coverage information.
+The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under `src` that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see this link for resource limitations of Microsoft hosted agents: <https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations>). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at `.azuredevops/ado-ci-pipeline-self-hosted.yml` includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under `src`, running pytest within each of these containers and publishing test results and coverage information.
 
 ### How to Configure Github Actions CI Pipeline
 
@@ -97,7 +114,7 @@ on:
 
 If you have connected to the origin repository using SSH authentication, you will need to do a bit of setup to reuse your local SSH key inside a Dev Container automatically, which will allow you to interact with the origin repository (git push, git pull etc.) inside the Dev Container.
 
-1. Try the recommendations in the official docs: https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
+1. Try the recommendations in the official docs: <https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials>
 1. If the previous step doesn't work, try the below method, that includes a bit of additional code to add keys to the SSH agent.
 
 Add the following to your ~/.bash_profile or ~/.profile or ~/.zprofile (by default most WSL users will have only a ~/.profile) so an ssh-agent will be started when needed and default keys will be added to the agent. The ssh-agent will then automatically forward keys to your Dev Container when its launched.
@@ -184,7 +201,7 @@ Interactive python scripts and jupyter notebooks are interchangeable as describe
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
 
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
