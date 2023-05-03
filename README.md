@@ -10,7 +10,7 @@ Another challenge you may face is each data scientist creating a low quality cod
 
 ### Features
 
-- Multi dev container samples (both CPU and GPU) with many common config steps already configured as following:
+- Multiple Dev Container samples (both CPU and GPU) with many common config steps already configured as following:
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit on VSCode on save
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit as precommit hook
   - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same Dev Container
