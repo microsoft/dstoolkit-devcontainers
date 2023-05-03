@@ -20,62 +20,6 @@ Another challenge you may face is each data scientist creating a low quality cod
 
 This template automates all tedious setup process as much as possible and saves time and reduces setup errors for the entire data scientist team.
 
-## Directory Structure
-
-This section gives you overview of the directory structure of this template. Only essential files are covered in this structure graph for simplicity. The directory structure is as follows:
-
-```bash
-.
-├── .azuredevops                   # CI pipelines for Azure DevOps. Details at section: How to Configure Azure DevOps CI Pipeline 
-├── .github                        # CI pipelines for Github Actions. Details at section: How to Configure Github Actions CI Pipeline 
-├── .pre-commit-config.yaml        # pre-commit config file with formatting and linting. Setup is covered in Section: Getting Started
-├── .env.example                   # Example of .env file. Setup is covered in Section: Getting Started
-├── bandit.yml                     # Setting file for bandit, security linter
-├── ci-tests.sh                    # Details at Section: Running all unit tests with ci-tests.sh
-├── data                           # Directory to keep your data for local training etc. This directory is gitignored 
-├── notebooks                      # Setup process is covered in Section: How to setup dev environment?
-│   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
-│   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
-│   │   ├── docker-compose.yml     # referred in devcontainer.json
-│   │   ├── Dockerfile             # referred in docker-compose.yml
-│   │   └── requirements.txt       # includes python package list for notebooks. used in Dockerfile
-│   └── sample_notebook.py         # example of interactive python script
-├── pytest.ini                     # Setting file for pytest
-└── src
-    ├── common                     # this module is accessible from all modules under src. put functions  you want to import across the projects here
-    │   └── requirements.txt       # python package list for common module. installed in all Dockerfile under src. python tools for src goes to here too
-    ├── sample_cpu_project         # cpu project example. Setup process is covered in Section: How to setup dev environment?
-    │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
-    │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
-    │   │   ├── docker-compose.yml # referred in devcontainer.json
-    │   │   ├── Dockerfile         # referred in docker-compose.yml. Supports only CPU
-    │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
-    │   ├── sample_main.py         
-    │   └── tests                  # pytest scripts for sample_cpu_project goes here
-    │       └── test_dummy.py      # pytest script example
-    └── sample_pytorch_gpu_project # gpu project example with pytorch. Setup process is covered in Section: How to setup dev environment?
-        ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
-        │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
-        │   ├── docker-compose.yml # referred in devcontainer.json
-        │   ├── Dockerfile         # referred in docker-compose.yml. Supports GPU
-        │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
-        ├── sample_main.py
-        └── tests                  # pytest scripts for sample_pytorch_gpu_project goes here
-            └── test_dummy.py      # pytest script example
-```
-
-### `notebooks` directory vs `src` directory
-
-There are two places to put python scripts/modules in this template. The `notebooks` directory is for experimental or throw-away python scripts and jupyter notebooks that you want to run cell by cell interactively. For example, EDA, one-off visualization codes, new model approaches you are not certain yet if you want to maintain over time typically go to this directory. The `src` directory is for python scripts and modules that you want to reuse and maintain over time. The `src` directory is also where you would put unit tests (typically under a `src/your_module/tests` directory).
-
-Given the nature of each directory's responsibility, there is also a different quality governance required. One big difference is that pre-commit hooks and CI pipelines run flake8 over `src` but not over `notebooks` (black, isort and bandit still run for both). For scripts in `notebooks`, we recommend you use [interactive python scripts](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) where you can have jupyter-like code cells within `.py` files rather than jupyter notebooks `.ipynb`. Interactive python files gives you the following benefits:
-
-- Comes with full benefits of python extension in VSCode such as code completion, linting, auto formatting, debugging etc
-- pre-commit hooks and CI pipelines will work as they run over `.py` files (but not `.ipynb` files)
-- Python file format is easier to review during a pull request review
-
-Interactive python scripts and jupyter notebooks are interchangeable as described in [Convert Jupyter notebooks to Python code file](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) so you can switch between them easily too if you want to use both formats during the development.
-
 ## Getting Started
 
 This section provides a comprehensive guide on how to set up a development environment using Dev Containers in Visual Studio Code with step-by-step instructions.
@@ -91,34 +35,6 @@ This section provides a comprehensive guide on how to set up a development envir
 1. Run `pre-commit install` in vscode terminal within dev container you just opened. This will setup your git precommit hook. This needs to run only once in the project and you don't need to rerun this every container rebuild.
 1. Now set up is done. If you want to develop in another directory for example under `src`, run `Dev Containers: Open Folder in Container...` and go to that directory that has `.devcontainer` and that will setup an dev environment for that directory.
 1. When you or others update either `requirements.txt` or `Dockerfile` in your working directory, make sure to rebuild your container to apply those changes to container. Run `Dev Containers: Rebuild and Reopen in Container...` for that.
-
-### Using SSH Keys in Dev Containers
-
-If you have connected to the origin repository using SSH authentication, you will need to do a bit of setup to reuse your local SSH key inside a Dev Container automatically, which will allow you to interact with the origin repository (git push, git pull etc.) inside the Dev Container.
-
-1. Try the recommendations in the official docs: https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
-1. If the previous step doesn't work, try the below method, that includes a bit of additional code to add keys to the SSH agent.
-
-Add the following to your ~/.bash_profile or ~/.profile or ~/.zprofile (by default most WSL users will have only a ~/.profile) so an ssh-agent will be started when needed and default keys will be added to the agent. The ssh-agent will then automatically forward keys to your Dev Container when its launched.
-
-```sh
-# this part taken from https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
-# check that link for the latest version or updates
-if [ -z "$SSH_AUTH_SOCK" ]; then
-   # Check for a currently running instance of the agent
-   RUNNING_AGENT="`ps -ax | grep 'ssh-agent -s' | grep -v grep | wc -l | tr -d '[:space:]'`"
-   if [ "$RUNNING_AGENT" = "0" ]; then
-        # Launch a new instance of the agent
-        ssh-agent -s &> $HOME/.ssh/ssh-agent
-   fi
-   eval `cat $HOME/.ssh/ssh-agent`
-fi
-
-# ADD SSH Keys to the SSH agent
-# if using non-default SSH key, add it to ssh-add command like:
-# ssh-add /path/to/your/ssh-key
-ssh-add
-```
 
 ## How to create a new directory under src with a new environment?
 
@@ -177,6 +93,90 @@ on:
       - main
 ```
 
+## Using SSH Keys in Dev Containers
+
+If you have connected to the origin repository using SSH authentication, you will need to do a bit of setup to reuse your local SSH key inside a Dev Container automatically, which will allow you to interact with the origin repository (git push, git pull etc.) inside the Dev Container.
+
+1. Try the recommendations in the official docs: https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
+1. If the previous step doesn't work, try the below method, that includes a bit of additional code to add keys to the SSH agent.
+
+Add the following to your ~/.bash_profile or ~/.profile or ~/.zprofile (by default most WSL users will have only a ~/.profile) so an ssh-agent will be started when needed and default keys will be added to the agent. The ssh-agent will then automatically forward keys to your Dev Container when its launched.
+
+```sh
+# this part taken from https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials
+# check that link for the latest version or updates
+if [ -z "$SSH_AUTH_SOCK" ]; then
+   # Check for a currently running instance of the agent
+   RUNNING_AGENT="`ps -ax | grep 'ssh-agent -s' | grep -v grep | wc -l | tr -d '[:space:]'`"
+   if [ "$RUNNING_AGENT" = "0" ]; then
+        # Launch a new instance of the agent
+        ssh-agent -s &> $HOME/.ssh/ssh-agent
+   fi
+   eval `cat $HOME/.ssh/ssh-agent`
+fi
+
+# ADD SSH Keys to the SSH agent
+# if using non-default SSH key, add it to ssh-add command like:
+# ssh-add /path/to/your/ssh-key
+ssh-add
+```
+
+## Directory Structure
+
+This section gives you overview of the directory structure of this template. Only essential files are covered in this structure graph for simplicity. The directory structure is as follows:
+
+```bash
+.
+├── .azuredevops                   # CI pipelines for Azure DevOps. Details at section: How to Configure Azure DevOps CI Pipeline 
+├── .github                        # CI pipelines for Github Actions. Details at section: How to Configure Github Actions CI Pipeline 
+├── .pre-commit-config.yaml        # pre-commit config file with formatting and linting. Setup is covered in Section: Getting Started
+├── .env.example                   # Example of .env file. Setup is covered in Section: Getting Started
+├── bandit.yml                     # Setting file for bandit, security linter
+├── ci-tests.sh                    # Details at Section: Running all unit tests with ci-tests.sh
+├── data                           # Directory to keep your data for local training etc. This directory is gitignored 
+├── notebooks                      # Setup process is covered in Section: How to setup dev environment?
+│   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
+│   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
+│   │   ├── docker-compose.yml     # referred in devcontainer.json
+│   │   ├── Dockerfile             # referred in docker-compose.yml
+│   │   └── requirements.txt       # includes python package list for notebooks. used in Dockerfile
+│   └── sample_notebook.py         # example of interactive python script
+├── pytest.ini                     # Setting file for pytest
+└── src
+    ├── common                     # this module is accessible from all modules under src. put functions  you want to import across the projects here
+    │   └── requirements.txt       # python package list for common module. installed in all Dockerfile under src. python tools for src goes to here too
+    ├── sample_cpu_project         # cpu project example. Setup process is covered in Section: How to setup dev environment?
+    │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
+    │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
+    │   │   ├── docker-compose.yml # referred in devcontainer.json
+    │   │   ├── Dockerfile         # referred in docker-compose.yml. Supports only CPU
+    │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
+    │   ├── sample_main.py         
+    │   └── tests                  # pytest scripts for sample_cpu_project goes here
+    │       └── test_dummy.py      # pytest script example
+    └── sample_pytorch_gpu_project # gpu project example with pytorch. Setup process is covered in Section: How to setup dev environment?
+        ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
+        │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
+        │   ├── docker-compose.yml # referred in devcontainer.json
+        │   ├── Dockerfile         # referred in docker-compose.yml. Supports GPU
+        │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
+        ├── sample_main.py
+        └── tests                  # pytest scripts for sample_pytorch_gpu_project goes here
+            └── test_dummy.py      # pytest script example
+```
+
+### `notebooks` directory vs `src` directory
+
+There are two places to put python scripts/modules in this template. The `notebooks` directory is for experimental or throw-away python scripts and jupyter notebooks that you want to run cell by cell interactively. For example, EDA, one-off visualization codes, new model approaches you are not certain yet if you want to maintain over time typically go to this directory. The `src` directory is for python scripts and modules that you want to reuse and maintain over time. The `src` directory is also where you would put unit tests (typically under a `src/your_module/tests` directory).
+
+Given the nature of each directory's responsibility, there is also a different quality governance required. One big difference is that pre-commit hooks and CI pipelines run flake8 over `src` but not over `notebooks` (black, isort and bandit still run for both). For scripts in `notebooks`, we recommend you use [interactive python scripts](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) where you can have jupyter-like code cells within `.py` files rather than jupyter notebooks `.ipynb`. Interactive python files gives you the following benefits:
+
+- Comes with full benefits of python extension in VSCode such as code completion, linting, auto formatting, debugging etc
+- pre-commit hooks and CI pipelines will work as they run over `.py` files (but not `.ipynb` files)
+- Python file format is easier to review during a pull request review
+
+Interactive python scripts and jupyter notebooks are interchangeable as described in [Convert Jupyter notebooks to Python code file](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) so you can switch between them easily too if you want to use both formats during the development.
+
 ## Future Roadmap and TODOs
 
 - Add Docker build caching to Azure DevOps MS hosted CI pipeline
@@ -184,20 +184,16 @@ on:
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
+
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
+
 Any use of third-party trademarks or logos are subject to those third-party's policies.
