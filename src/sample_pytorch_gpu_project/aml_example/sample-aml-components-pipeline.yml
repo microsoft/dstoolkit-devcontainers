@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+display_name: sample_pytorch_gpu_pipeline_run  # change this name each run to be descriptive
+experiment_name: sample_pytorch_gpu_pipeline
+description: Pytorch model training, inference, evaluation.
+
+jobs:
+  train_component:
+    type: command
+    component: /workspace/src/sample_pytorch_gpu_project/aml_example/aml_components/train-component.yaml
+    compute: azureml:pytorch-gpu-cluster
+    inputs:
+      batch_size: 4
+    outputs:
+      train_artifacts_dir: 
+        type: uri_folder
+        mode: rw_mount
+  inference_component:
+    type: command
+    component: /workspace/src/sample_pytorch_gpu_project/aml_example/aml_components/inference-component.yaml
+    compute: azureml:pytorch-gpu-cluster
+    inputs:
+      train_artifacts_dir: ${{parent.jobs.train_component.outputs.train_artifacts_dir}}
+    outputs:
+      test_set_preds_dir: 
+        type: uri_folder
+        mode: rw_mount
+identity:
+  # use with a managed identity assigned to compute cluster
+  # type: managed_identity
+  # use with user identity that is logged in to AML CLI
+  type: user_identity

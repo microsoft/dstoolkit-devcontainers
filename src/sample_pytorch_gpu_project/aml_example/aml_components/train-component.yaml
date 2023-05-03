@@ -1,0 +1,19 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+display_name: pytorch-train-component
+name: pytorch_train_component
+description: Train a Pytorch model.
+version: 1
+
+code: /workspac/src
+command: >-
+  python sample_pytorch_gpu_project/train.py --train_artifacts_dir ${{outputs.train_artifacts_dir}} --batch_size ${{inputs.batch_size}}
+inputs:
+  batch_size:
+    type: integer
+    default: 4
+outputs:
+  train_artifacts_dir:
+    type: uri_folder
+environment: azureml:pytorch-gpu-env@latest  # should match name used in aml_setup/create-env.yaml

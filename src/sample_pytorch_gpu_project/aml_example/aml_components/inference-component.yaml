@@ -1,0 +1,18 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+
+display_name: pytorch-inference-component
+name: pytorch_inference_component
+description: Get best model from training run and do inference on the test set.
+version: 1
+
+code: /workspace/src
+command: >-
+  python sample_pytorch_gpu_project/inference.py --train_artifacts_dir ${{inputs.train_artifacts_dir}} --preds_dir ${{outputs.test_set_preds_dir}}
+inputs:
+  train_artifacts_dir:
+    type: uri_folder
+outputs:
+  test_set_preds_dir:
+    type: uri_folder
+environment: azureml:pytorch-gpu-env@latest  # should match name used in aml_setup/create-env.yaml

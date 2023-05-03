@@ -5,3 +5,7 @@ torchvision==0.15.1
 # torch==1.13.1+cu117
 # torchvision==0.14.1+cu117
 # --extra-index-url https://download.pytorch.org/whl/cu117
+
+# the below are used by AML, can be deleted if not using AML
+mlflow==2.3.0
+azureml-mlflow==1.50.0

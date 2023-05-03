@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
+# https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-environments-v2?tabs=cli
+name: pytorch-gpu-env
+build:
+  path: /workspace/src  # context at this level to include src/common requirements
+  dockerfile_path: sample_pytorch_gpu_project/.devcontainer/Dockerfile

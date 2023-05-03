@@ -5,3 +5,10 @@
 **/__pycache__
 **/.mypy_cache
 **/.pytest_cache
+**/.vscode
+**/junit
+**/.azuredevops
+**/.venv
+**/venv
+**/*.md
+**/train_artifacts
