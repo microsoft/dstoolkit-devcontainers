@@ -2,20 +2,20 @@
 
 ## Table of Contents
 
-0. [Introduction and Overview](#introduction-and-overview)
- 1. [Features](#features)
-1. [Getting Started](#getting-started)
-2. [How to create a new directory under src with a new environment?](#how-to-create-a-new-directory-under-src-with-a-new-environment)
-3. [Github Actions and Azure DevOps CI pipelines](#ci-pipeline)
-  1. [Running all unit tests with ci-tests.sh](#running-all-unit-tests-with-ci-testssh)
-  2. [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
-  3. [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
-4. [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
-5. [Directory Structure](#directory-structure)
-  1. [notebooks directory vs src directory](#notebooks-directory-vs-src-directory)
-6. [Future Roadmap and TODOs](#future-roadmap-and-todos)
-7. [Contributing](#contributing)
-8. [Trademarks](#trademarks)
+- [Introduction and Overview](#introduction-and-overview)
+  - [Features](#features)
+- [Getting Started](#getting-started)
+- [How to create a new directory under src with a new environment?](#how-to-create-a-new-directory-under-src-with-a-new-environment)
+- [CI pipelines](#ci-pipeline)
+  - [Running all unit tests with ci-tests.sh](#running-all-unit-tests-with-ci-testssh)
+  - [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
+  - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
+- [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
+- [Directory Structure](#directory-structure)
+  - [notebooks directory vs src directory](#notebooks-directory-vs-src-directory)
+- [Future Roadmap and TODOs](#future-roadmap-and-todos)
+- [Contributing](#contributing)
+- [Trademarks](#trademarks)
 
 ## Introduction and Overview
 
