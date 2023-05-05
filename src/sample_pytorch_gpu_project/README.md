@@ -1,6 +1,10 @@
-# AML Component Example
+# AML Components-based Pipeline Example
 
-This subdirectory contains a configured and tested lightweight Azure Machine Learning (AML) CLI v2 pipeline components example. This example allows you to seemlessly move from working in the the local Dev Container environment to a cloud based environment with the exact same Dockerfile. As an exmaple workflow, you could work with the sample `train.py` and `inference.py` with your local CPU/GPU to get things working and then easily transition to running the same scripts in an AML cloud environment that has a more powerful GPU.
+This subdirectory contains a configured and tested lightweight Azure Machine Learning (AML) CLI v2 compopnents-based ML pipeline example. Read more about components-based pipelines here: <https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-component-pipelines-cli?view=azureml-api-2>. This example allows you to seemlessly move from working in the the local Dev Container environment to a cloud based environment with the exact same Dockerfile.
+
+Two example files are provided, `train.py` and `inference.py` which contains a pytorch example (taken from <https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html?highlight=cifar10>) for training a small conv-net on CIFAR10 and performing inference and evaluation with the trained model. These files are also wrapped in AML components (`aml_example/aml_components/train-component.yaml` and `aml_example/aml_components/inference-component.yaml`) which is then composed in a AML components-based pipeline in `aml_example/sample-aml-components-pipeline.yml`. The example can thus be run locally inside the Dev Container or in the cloud in AML, with the exact same environment. See the sections below for how to setup and run the example in AML.
+
+As an exmaple workflow, you could work with the sample `train.py` and `inference.py` with your local CPU/GPU to get things working and then easily transition to running the same scripts in an AML cloud environment that has a more powerful GPU.
 
 ## Using the AML CLI v2
 
@@ -57,7 +61,7 @@ Create the custom AML environment from the command line inside the Dev Container
 az ml environment create --file aml_example/aml_setup/create-env.yaml -g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
 ```
 
-Note this environment will need to be updated manually anytime new dependencies are added to `.devcontainer/requirements.txt` or `.devcontainer/Dockerfile` is updated. The environment can be rebuilt by running the exact same command used above to create the environment.
+Note this environment will need to be updated manually anytime new dependencies are added to `.devcontainer/requirements.txt` or `.devcontainer/Dockerfile` is updated. Also if you add new dependencies in `src/common/requirements.txt` that are needed in `src/sample_pytorch_gpu_project` then this will also require a environment rebuild. The environment can be rebuilt by running the exact same command used above to create the environment.
 
 ## Run the AML Component Example
 
@@ -71,7 +75,25 @@ az ml job create -f aml_example/aml_setup/sample-aml-components-pipeline.yml --w
 
 ## Explanation of AML Files
 
-TODO
+```bash
+src/sample_pytorch_gpu_project/
+├── README.md
+├── aml_example                                 # Contains all AML related files
+│   ├── aml_components                          # AML component files that are used in sample-aml-components-pipeline.yml
+│   │   ├── inference-component.yaml            # AML CLI v2 inference component that wraps inference.py
+│   │   └── train-component.yaml                # AML CLI v2 training component that wraps train.py
+│   ├── aml_setup                               # AML workspace setup files
+│   │   ├── create-cpu-compute.yaml             # Create AML CPU cluster
+│   │   ├── create-env.yaml                     # Create AML custom Docker environment
+│   │   └── create-gpu-compute.yaml             # Create AML GPU cluster
+│   └── sample-aml-components-pipeline.yml      # Sample AML CLI v2 components pipeline that refers to aml_components/inference-component.yaml and aml_components/train-component.yaml
+├── inference.py                                # Example of pytorch model inference (from a trained model from train.py)
+├── sample_main.py                              # Sample function used by unit tests
+├── tests
+│   └── test_dummy.py                           # Sample pytest that calls function from sample_main.py
+└── train.py                                    # Example of pytorch model training, can be run locally or in AML job
+
+```
 
 ## How to delete all AML dependencies and source files
 
