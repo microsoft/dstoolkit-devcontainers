@@ -8,6 +8,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+from common.sample_common import common_function
 
 
 # Example model, delete or replace with your own
@@ -43,6 +44,7 @@ def main(args):
     print(device)
 
     # code below this comment is a sample only, replace with your own training code
+    common_function()
 
     # transforms.Normalize() uses Imagenet means and stds
     transform = transforms.Compose(
