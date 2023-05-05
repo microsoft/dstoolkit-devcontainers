@@ -4,43 +4,80 @@ This subdirectory contains a configured and tested lightweight Azure Machine Lea
 
 ## Using the AML CLI v2
 
-The Dev Container environment comes pre-configured with Azure CLI and the AML CLI v2 extension. See this link for more information: <https://learn.microsoft.com/en-us/azure/machine-learning/how-to-configure-cli?view=azureml-api-2&tabs=public>. 
+The Dev Container environment comes configured with Azure CLI and the AML CLI v2 extension. See this link for more information: <https://learn.microsoft.com/en-us/azure/machine-learning/how-to-configure-cli?view=azureml-api-2&tabs=public>. 
 
 With your Dev Container launched for `src/sample_pytorch_gpu_project`, verify that the AML CLI v2 extension is installed with:
 
-```
+```bash
 az ml
 ```
 
 If this runs then log-in to your Azure account with:
 
-```
+```bash
 az login
 ```
 
 Alternatively, you may need to specify the specific tenant that contains the Subscription and Workspace you will be running AML jobs in:
 
-```
+```bash
 az login --use-device-code --tenant azurelsis.onmicrosoft.com
 ```
 
+Note to avoid manually specifying `-g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>` in the `az` commands below you can place these secrets in your `.env` file in the root of the repository (not tracked by git). You will need to relaunch the Dev Container after adding these.
+
 ## Setup AML Compute and Docker Environment
 
-After logging into the AML CLI you will need to setup an AML compute clusters and AML custom environment to run the train.py and inference.py scripts in the AML components pipeline example (`aml_example/sample-aml-components-pipeline.yml`).
+After logging into the AML CLI you will need to setup a AML compute cluster and AML custom environment to run the train.py and inference.py scripts in the AML components pipeline example (`aml_example/sample-aml-components-pipeline.yml`).
 
-We will need two types of compute clusters, a GPU one for training and inference and a CPU one for evaluation metrics. Create the compute clusters using the CLI (adjust any setting in the YAML first): `az ml compute create -f aml_setup/create-gpu-compute.yaml -g $RESOURCE_GROUP -w $WORKSPACE_NAME` and `az ml compute create -f aml_setup/create-cpu-compute.yaml -g $RESOURCE_GROUP -w $WORKSPACE_NAME`, we will use these cluster for running AML command components by specifying the 'compute' property in dl-components-pipeline.yml
+### Setup the AML compute cluster
+
+There are two options provided to setup compute clusters, a GPU cluster (using `aml_example/aml_setup/create-gpu-compute.yaml`) and a CPU cluster (using `aml_example/aml_setup/create-cpu-compute.yaml`). To run the example we will just create the GPU cluster, but in the future you may create both GPU and CPU clusters and then use a mix of compute across different types of scripts (eg. GPU for training and CPU for an evaluation script).
+
+First update the `location` and `size` parameters in the  `aml_example/aml_setup/create-gpu-compute.yaml` to match the requirements for your subscription and AML workspace:
+
+```yaml
+size: Standard_NC6
+location: centralus
+```
+
+Create the compute cluster from the command line inside the Dev Container:
+
+```bash
+az ml compute create -f aml_example/aml_setup/create-gpu-compute.yaml -g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
+```
+
+### Setup the AML custom environment
+
+We will use the exact same Dockerfile that specifies the Dev Container and local running environment for running jobs in AML so that there is a seemless transition to the cloud.
+
+Create the custom AML environment from the command line inside the Dev Container:
+
+```bash
+az ml environment create --file aml_example/aml_setup/create-env.yaml -g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
+```
+
+Note this environment will need to be updated manually anytime new dependencies are added to `.devcontainer/requirements.txt` or `.devcontainer/Dockerfile` is updated. The environment can be rebuilt by running the exact same command used above to create the environment.
 
 ## Run the AML Component Example
 
+Now we can run the AML component example `aml_example/aml_setup/create-gpu-compute.yaml` which will run `train.py` and `inference.py` in sequence, with the trained model passed between the steps by the pipeline.
+
+Start the pipeline experiment from the command line inside the Dev Container:
+
+```bash
+az ml job create -f aml_example/aml_setup/sample-aml-components-pipeline.yml --web --g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
+```
 
 ## Explanation of AML Files
 
+TODO
 
 ## How to delete all AML dependencies and source files
 
 If you don't need to use any of the sample AML integrations follow the steps below to remove all dependencies and related source files.
 
-1. In `.devcontainer/Dockerfile`, remove:
+1. In `.devcontainer/Dockerfile`, remove the following lines :
 
     ```bash
     RUN wget -qO- https://aka.ms/InstallAzureCLIDeb | bash
@@ -54,7 +91,7 @@ If you don't need to use any of the sample AML integrations follow the steps bel
 
 2. Remove the mlflow dependencies in `.devcontainer/requirements.txt`:
 
-    ```
+    ```txt
     mlflow==2.3.0
     azureml-mlflow==1.50.0
     ```
