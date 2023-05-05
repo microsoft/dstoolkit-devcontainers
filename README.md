@@ -53,7 +53,7 @@ This section provides a comprehensive guide on how to set up a development envir
 1. Now set up is done. If you want to develop in another directory for example under `src`, run `Dev Containers: Open Folder in Container...` and go to that directory that has `.devcontainer` and that will setup an dev environment for that directory.
 1. When you or others update either `requirements.txt` or `Dockerfile` in your working directory, make sure to rebuild your container to apply those changes to container. Run `Dev Containers: Rebuild and Reopen in Container...` for that.
 
-## How to create a new directory under src with a new environment?
+## How to create a new directory under src with a new environment
 
 1. Copy `src/sample_cpu_project/` under `src` and rename it. If you need gpu environment, base off of `src/sample_pytorch_gpu_project` instead
 1. Edit `.devcontainer/devcontainer.json` under the new directory and replace `sample_cpu_project` with the new directory name
