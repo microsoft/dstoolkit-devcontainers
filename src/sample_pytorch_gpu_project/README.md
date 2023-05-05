@@ -1,10 +1,20 @@
 # AML Components-based Pipeline Example
 
+## Introduction
+
 This subdirectory contains a configured and tested lightweight Azure Machine Learning (AML) CLI v2 compopnents-based ML pipeline example. Read more about components-based pipelines here: <https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-component-pipelines-cli?view=azureml-api-2>. This example allows you to seemlessly move from working in the the local Dev Container environment to a cloud based environment with the exact same Dockerfile.
 
 Two example files are provided, `train.py` and `inference.py` which contains a pytorch example (taken from <https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html?highlight=cifar10>) for training a small conv-net on CIFAR10 and performing inference and evaluation with the trained model. These files are also wrapped in AML components (`aml_example/aml_components/train-component.yaml` and `aml_example/aml_components/inference-component.yaml`) which is then composed in a AML components-based pipeline in `aml_example/sample-aml-components-pipeline.yml`. The example can thus be run locally inside the Dev Container or in the cloud in AML, with the exact same environment. See the sections below for how to setup and run the example in AML.
 
 As an exmaple workflow, you could work with the sample `train.py` and `inference.py` with your local CPU/GPU to get things working and then easily transition to running the same scripts in an AML cloud environment that has a more powerful GPU.
+
+## Prerequisites
+
+Before you try out the AML example, you will need setup an Azure account with the following:
+
+- If you don't have an Azure subscription, create a free account before you begin. Try the [free or paid version of Azure Machine Learning](https://azure.microsoft.com/free/).
+
+- An Azure Machine Learning workspace. [Create workspace resources](https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2).
 
 ## Using the AML CLI v2
 
@@ -61,7 +71,9 @@ Create the custom AML environment from the command line inside the Dev Container
 az ml environment create --file aml_example/aml_setup/create-env.yaml -g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
 ```
 
-Note this environment will need to be updated manually anytime new dependencies are added to `.devcontainer/requirements.txt` or `.devcontainer/Dockerfile` is updated. Also if you add new dependencies in `src/common/requirements.txt` that are needed in `src/sample_pytorch_gpu_project` then this will also require a environment rebuild. The environment can be rebuilt by running the exact same command used above to create the environment.
+#### **Updating the AML Custom Environment**
+
+Note AML environment will need to be updated manually anytime new dependencies are added to `.devcontainer/requirements.txt` or `.devcontainer/Dockerfile` is updated. Also if you add new dependencies in `src/common/requirements.txt` that are needed in `src/sample_pytorch_gpu_project` then this will also require a environment rebuild. The environment can be rebuilt by running the exact same command used above to create the environment.
 
 ## Run the AML Component Example
 
