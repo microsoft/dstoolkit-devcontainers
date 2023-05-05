@@ -138,6 +138,10 @@ fi
 ssh-add
 ```
 
+## AML Example
+
+An Azure Machine Learning (AML) example is provided under `src/sample_pytorch_gpu_example`. The example is a AML Components-based ML pipeline, that runs a pytorch based training step followed by a inference/evaluation step. This example shows the seemless transition of moving from a local run (inside the Dev Container) of pytorch based training/inference and running that in the cloud in the exact same Docker environment but with flexible compute options. See the README under `src/sample_pytorch_gpu_example` for a detailed explanation and instructions of the example code.
+
 ## Directory Structure
 
 This section gives you overview of the directory structure of this template. Only essential files are covered in this structure graph for simplicity. The directory structure is as follows:
@@ -172,12 +176,16 @@ This section gives you overview of the directory structure of this template. Onl
     │   └── tests                  # pytest scripts for sample_cpu_project goes here
     │       └── test_dummy.py      # pytest script example
     └── sample_pytorch_gpu_project # gpu project example with pytorch. Setup process is covered in Section: How to setup dev environment?
+        ├── README.md              # README for AML example contained in sample_pytorch_gpu_project
         ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
         │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
         │   ├── docker-compose.yml # referred in devcontainer.json
         │   ├── Dockerfile         # referred in docker-compose.yml. Supports GPU
         │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
-        ├── sample_main.py
+        ├── aml_example/           # Sample AML CLI v2 Components-based pipeline, including setup YAML. See sample_pytorch_gpu_project/README for full details of files in this directory.
+        ├── sample_main.py        
+        ├── inference.py           # Example pytorch inference/eval script that also works with aml_example
+        ├── train.py               # Example pytorch model training script that also works with aml_example
         └── tests                  # pytest scripts for sample_pytorch_gpu_project goes here
             └── test_dummy.py      # pytest script example
 ```
