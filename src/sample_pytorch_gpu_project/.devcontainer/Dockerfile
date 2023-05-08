@@ -33,4 +33,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY common/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# install common folder as an editable python package
+COPY common common
+RUN pip install -e common
+
 RUN az extension add --name ml
