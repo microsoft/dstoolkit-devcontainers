@@ -1,6 +1,6 @@
 # Dev Containers for ML feasibility study with VS Code
 
-A machine learning and data science project template that makes it easy to work with multiple Docker based [Dev Containers](<https://code.visualstudio.com/docs/devcontainers/containers>) in the same repository. The template also makes it easy to transition projects to the cloud and production by including automated code quality checks, CI pipeline templates and a sample for running on Azure Machine Learning.
+A machine learning and data science project template that makes it easy to work with multiple Docker based [VSCode Dev Containers](<https://code.visualstudio.com/docs/devcontainers/containers>) in the same repository. The template also makes it easy to transition projects to the cloud and production by including automated code quality checks, pytest configuration, CI pipeline templates and a sample for running on Azure Machine Learning.
 
 ## Contents
 
@@ -8,14 +8,14 @@ A machine learning and data science project template that makes it easy to work 
   - [Features](#features)
 - [Getting Started](#getting-started)
 - [How to create a new directory under src with a new environment?](#how-to-create-a-new-directory-under-src-with-a-new-environment)
+- [Directory Structure](#directory-structure)
+  - [notebooks directory vs src directory](#notebooks-directory-vs-src-directory)
+- [AML Example](#aml-example)
 - [CI pipeline](#ci-pipeline)
   - [Running all unit tests with ci-tests.sh](#running-all-unit-tests-with-ci-testssh)
   - [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
   - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
 - [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
-- [AML Example](#aml-example)
-- [Directory Structure](#directory-structure)
-  - [notebooks directory vs src directory](#notebooks-directory-vs-src-directory)
 - [Future Roadmap and TODOs](#future-roadmap-and-todos)
 - [Contributing](#contributing)
 - [Trademarks](#trademarks)
@@ -33,7 +33,7 @@ Another challenge you may face is each data scientist creating a low quality cod
 - Multiple Dev Container samples (both CPU and GPU) with many common config steps already configured as following:
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit on VSCode on save
   - Automated code quality checks (linter and auto formatter) with black, flake8, isort and bandit as precommit hook
-  - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same Dev Container
+  - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same Dockerfile
   - Pre-configured VSCode extensions installed such as python, jupyter, shellcheck, code-spell-checker, git tools etc
 - [Github Actions and Azure DevOps CI pipelines](#ci-pipeline) that run linters (flake8 and bandit) and pytest with test result reporting and coverage reporting
 - Pull Request templates that helps you to write a good PR description for both Github and Azure DevOps
@@ -65,6 +65,70 @@ This section provides a comprehensive guide on how to set up a development envir
 1. Update other parts of `Dockerfile` if you need
 1. Update `requirements.txt` if you need
 1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
+
+## Directory Structure
+
+This section gives you overview of the directory structure of this template. Only essential files are covered in this structure graph for simplicity. The directory structure is as follows:
+
+```bash
+.
+├── .azuredevops                   # CI pipelines for Azure DevOps. Details at section: How to Configure Azure DevOps CI Pipeline 
+├── .github                        # CI pipelines for Github Actions. Details at section: How to Configure Github Actions CI Pipeline 
+├── .pre-commit-config.yaml        # pre-commit config file with formatting and linting. Setup is covered in Section: Getting Started
+├── .env.example                   # Example of .env file. Setup is covered in Section: Getting Started
+├── bandit.yml                     # Setting file for bandit, security linter
+├── ci-tests.sh                    # Details at Section: Running all unit tests with ci-tests.sh
+├── data                           # Directory to keep your data for local training etc. This directory is gitignored 
+├── notebooks                      # Setup process is covered in Section: How to setup dev environment?
+│   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
+│   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
+│   │   ├── docker-compose.yml     # referred in devcontainer.json
+│   │   ├── Dockerfile             # referred in docker-compose.yml
+│   │   └── requirements.txt       # includes python package list for notebooks. used in Dockerfile
+│   └── sample_notebook.py         # example of interactive python script
+├── pytest.ini                     # Setting file for pytest
+└── src
+    ├── common                     # this module is accessible from all modules under src. put functions  you want to import across the projects here
+    │   └── requirements.txt       # python package list for common module. installed in all Dockerfile under src. python tools for src goes to here too
+    ├── sample_cpu_project         # cpu project example. Setup process is covered in Section: How to setup dev environment?
+    │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
+    │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
+    │   │   ├── docker-compose.yml # referred in devcontainer.json
+    │   │   ├── Dockerfile         # referred in docker-compose.yml. Supports only CPU
+    │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
+    │   ├── sample_main.py         
+    │   └── tests                  # pytest scripts for sample_cpu_project goes here
+    │       └── test_dummy.py      # pytest script example
+    └── sample_pytorch_gpu_project # gpu project example with pytorch. Setup process is covered in Section: How to setup dev environment?
+        ├── README.md              # README for AML example contained in sample_pytorch_gpu_project
+        ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
+        │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
+        │   ├── docker-compose.yml # referred in devcontainer.json
+        │   ├── Dockerfile         # referred in docker-compose.yml. Supports GPU
+        │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
+        ├── aml_example/           # Sample AML CLI v2 Components-based pipeline, including setup YAML. See sample_pytorch_gpu_project/README for full details of files in this directory.
+        ├── sample_main.py        
+        ├── inference.py           # Example pytorch inference/eval script that also works with aml_example
+        ├── train.py               # Example pytorch model training script that also works with aml_example
+        └── tests                  # pytest scripts for sample_pytorch_gpu_project goes here
+            └── test_dummy.py      # pytest script example
+```
+
+### `notebooks` directory vs `src` directory
+
+There are two places to put python scripts/modules in this template. The `notebooks` directory is for experimental or throw-away python scripts and jupyter notebooks that you want to run cell by cell interactively. For example, EDA, one-off visualization codes, new model approaches you are not certain yet if you want to maintain over time typically go to this directory. The `src` directory is for python scripts and modules that you want to reuse and maintain over time. The `src` directory is also where you would put unit tests (typically under a `src/your_module/tests` directory).
+
+Given the nature of each directory's responsibility, there is also a different quality governance required. One big difference is that pre-commit hooks and CI pipelines run flake8 over `src` but not over `notebooks` (black, isort and bandit still run for both). For scripts in `notebooks`, we recommend you use [interactive python scripts](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) where you can have jupyter-like code cells within `.py` files rather than jupyter notebooks `.ipynb`. Interactive python files gives you the following benefits:
+
+- Comes with full benefits of python extension in VSCode such as code completion, linting, auto formatting, debugging etc
+- pre-commit hooks and CI pipelines will work as they run over `.py` files (but not `.ipynb` files)
+- Python file format is easier to review during a pull request review
+
+Interactive python scripts and jupyter notebooks are interchangeable as described in [Convert Jupyter notebooks to Python code file](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) so you can switch between them easily too if you want to use both formats during the development.
+
+## AML Example
+
+An Azure Machine Learning (AML) example is provided under `src/sample_pytorch_gpu_example`. The example is a AML Components-based ML pipeline, that runs a pytorch based training step followed by a inference/evaluation step. This example shows the seemless transition of moving from a local run (inside the Dev Container) of pytorch based training/inference and running in the cloud in the exact same Docker environment with flexible compute options. See the [AML Components-based Pipeline Example README](src/sample_pytorch_gpu_project/README.md) for a detailed explanation and instructions of the example code.
 
 ## CI Pipeline
 
@@ -141,74 +205,11 @@ fi
 ssh-add
 ```
 
-## AML Example
-
-An Azure Machine Learning (AML) example is provided under `src/sample_pytorch_gpu_example`. The example is a AML Components-based ML pipeline, that runs a pytorch based training step followed by a inference/evaluation step. This example shows the seemless transition of moving from a local run (inside the Dev Container) of pytorch based training/inference and running in the cloud in the exact same Docker environment with flexible compute options. See the [AML Components-based Pipeline Example README](src/sample_pytorch_gpu_project/README.md) for a detailed explanation and instructions of the example code.
-
-## Directory Structure
-
-This section gives you overview of the directory structure of this template. Only essential files are covered in this structure graph for simplicity. The directory structure is as follows:
-
-```bash
-.
-├── .azuredevops                   # CI pipelines for Azure DevOps. Details at section: How to Configure Azure DevOps CI Pipeline 
-├── .github                        # CI pipelines for Github Actions. Details at section: How to Configure Github Actions CI Pipeline 
-├── .pre-commit-config.yaml        # pre-commit config file with formatting and linting. Setup is covered in Section: Getting Started
-├── .env.example                   # Example of .env file. Setup is covered in Section: Getting Started
-├── bandit.yml                     # Setting file for bandit, security linter
-├── ci-tests.sh                    # Details at Section: Running all unit tests with ci-tests.sh
-├── data                           # Directory to keep your data for local training etc. This directory is gitignored 
-├── notebooks                      # Setup process is covered in Section: How to setup dev environment?
-│   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
-│   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
-│   │   ├── docker-compose.yml     # referred in devcontainer.json
-│   │   ├── Dockerfile             # referred in docker-compose.yml
-│   │   └── requirements.txt       # includes python package list for notebooks. used in Dockerfile
-│   └── sample_notebook.py         # example of interactive python script
-├── pytest.ini                     # Setting file for pytest
-└── src
-    ├── common                     # this module is accessible from all modules under src. put functions  you want to import across the projects here
-    │   └── requirements.txt       # python package list for common module. installed in all Dockerfile under src. python tools for src goes to here too
-    ├── sample_cpu_project         # cpu project example. Setup process is covered in Section: How to setup dev environment?
-    │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
-    │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
-    │   │   ├── docker-compose.yml # referred in devcontainer.json
-    │   │   ├── Dockerfile         # referred in docker-compose.yml. Supports only CPU
-    │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
-    │   ├── sample_main.py         
-    │   └── tests                  # pytest scripts for sample_cpu_project goes here
-    │       └── test_dummy.py      # pytest script example
-    └── sample_pytorch_gpu_project # gpu project example with pytorch. Setup process is covered in Section: How to setup dev environment?
-        ├── README.md              # README for AML example contained in sample_pytorch_gpu_project
-        ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
-        │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
-        │   ├── docker-compose.yml # referred in devcontainer.json
-        │   ├── Dockerfile         # referred in docker-compose.yml. Supports GPU
-        │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
-        ├── aml_example/           # Sample AML CLI v2 Components-based pipeline, including setup YAML. See sample_pytorch_gpu_project/README for full details of files in this directory.
-        ├── sample_main.py        
-        ├── inference.py           # Example pytorch inference/eval script that also works with aml_example
-        ├── train.py               # Example pytorch model training script that also works with aml_example
-        └── tests                  # pytest scripts for sample_pytorch_gpu_project goes here
-            └── test_dummy.py      # pytest script example
-```
-
-### `notebooks` directory vs `src` directory
-
-There are two places to put python scripts/modules in this template. The `notebooks` directory is for experimental or throw-away python scripts and jupyter notebooks that you want to run cell by cell interactively. For example, EDA, one-off visualization codes, new model approaches you are not certain yet if you want to maintain over time typically go to this directory. The `src` directory is for python scripts and modules that you want to reuse and maintain over time. The `src` directory is also where you would put unit tests (typically under a `src/your_module/tests` directory).
-
-Given the nature of each directory's responsibility, there is also a different quality governance required. One big difference is that pre-commit hooks and CI pipelines run flake8 over `src` but not over `notebooks` (black, isort and bandit still run for both). For scripts in `notebooks`, we recommend you use [interactive python scripts](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) where you can have jupyter-like code cells within `.py` files rather than jupyter notebooks `.ipynb`. Interactive python files gives you the following benefits:
-
-- Comes with full benefits of python extension in VSCode such as code completion, linting, auto formatting, debugging etc
-- pre-commit hooks and CI pipelines will work as they run over `.py` files (but not `.ipynb` files)
-- Python file format is easier to review during a pull request review
-
-Interactive python scripts and jupyter notebooks are interchangeable as described in [Convert Jupyter notebooks to Python code file](https://code.visualstudio.com/docs/python/jupyter-support-py#_convert-jupyter-notebooks-to-python-code-file) so you can switch between them easily too if you want to use both formats during the development.
-
 ## Future Roadmap and TODOs
 
 - Add Docker build caching to Azure DevOps MS hosted CI pipeline
 - Add tensorflow GPU example
+- Investigate making `src/common` installed with `pip -e`
 
 ## Contributing
 
