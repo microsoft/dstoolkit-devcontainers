@@ -123,14 +123,14 @@ If you don't need to use any of the sample AML integrations follow the steps bel
     RUN az extension add --name ml
     ```
 
-2. Remove the mlflow dependencies in `.devcontainer/requirements.txt`:
+2. Remove the `mlflow` dependencies in `.devcontainer/requirements.txt`:
 
     ```txt
-    mlflow==2.3.0
+    mlflow==2.3.1
     azureml-mlflow==1.50.0
     ```
 
-    Note that you could keep the mlflow dependency if you want to keep `train.py` and `inference.py` for local runs with mlflow logging.
+    Note that you could keep the `mlflow` dependency if you want to keep `train.py` and `inference.py` for local runs with `mlflow` logging.
 
 3. Delete the entire `aml_example` directory.
 
