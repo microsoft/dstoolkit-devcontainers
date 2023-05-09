@@ -1,12 +1,14 @@
 # Dev Containers for ML feasibility study with VS Code
 
+A machine learning and data science project template that makes it easy to work with multiple Docker based [Dev Containers](<https://code.visualstudio.com/docs/devcontainers/containers>) in the same repository. The template also makes it easy to transition projects to the cloud and production by including automated code quality checks, CI pipeline templates and a sample for running on Azure Machine Learning.
+
 ## Contents
 
 - [Introduction and Overview](#introduction-and-overview)
   - [Features](#features)
 - [Getting Started](#getting-started)
 - [How to create a new directory under src with a new environment?](#how-to-create-a-new-directory-under-src-with-a-new-environment)
-- [CI pipelines](#ci-pipeline)
+- [CI pipeline](#ci-pipeline)
   - [Running all unit tests with ci-tests.sh](#running-all-unit-tests-with-ci-testssh)
   - [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
   - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
@@ -19,7 +21,7 @@
 
 ## Introduction and Overview
 
-This repository provides a VSCode Dev Container based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) until production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
+This repository provides a [VSCode Dev Container](<https://code.visualstudio.com/docs/devcontainers/containers>) based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) until production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
 
 During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of Dev Containers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU Dev Container setup as examples. To support multiple different ML approaches with different python environments to be experimented in one project, this solution allows multiple different Dev Containers to be used in one repository while having a "common" module that will be installed into all Dev Container to enable code reuse across different Dev Containers.
 
@@ -88,13 +90,13 @@ Note that the `ci-test.sh` script can be run locally as well and it is assumed t
 
 ### How to Configure Azure DevOps CI Pipeline
 
-See <https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops> for how to setup a pipeline in Azure DevOps. Note that to use the provided template in this repository, you will need to specify the path to `.azuredevops/ado-ci-pipeline-ms-hosted.yml` during the pipeline setup process in Azure DevOps.
+See [create your first pipeline](<https://learn.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline?view=azure-devops>) for how to setup a pipeline in Azure DevOps. Note that to use the provided template in this repository, you will need to specify the path to `.azuredevops/ado-ci-pipeline-ms-hosted.yml` during the pipeline setup process in Azure DevOps.
 
 #### Choosing between Azure DevOps Microsoft-hosted vs Self-hosted CI Pipeline
 
 There are two templates for running a CI pipeline in Azure DevOps, a pipeline configuration that uses a Microsoft hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-ms-hosted.yml`) and a pipeline configuration that uses a self-hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-self-hosted.yml`).
 
-The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under `src` that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see this link for resource limitations of Microsoft hosted agents: <https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations>). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at `.azuredevops/ado-ci-pipeline-self-hosted.yml` includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under `src`, running pytest within each of these containers and publishing test results and coverage information.
+The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under `src` that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see [resource limitations of Microsoft hosted agents](<https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations>)). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at `.azuredevops/ado-ci-pipeline-self-hosted.yml` includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under `src`, running pytest within each of these containers and publishing test results and coverage information.
 
 ### How to Configure Github Actions CI Pipeline
 
@@ -114,10 +116,10 @@ on:
 
 If you have connected to the origin repository using SSH authentication, you will need to do a bit of setup to reuse your local SSH key inside a Dev Container automatically, which will allow you to interact with the origin repository (git push, git pull etc.) inside the Dev Container.
 
-1. Try the recommendations in the official docs: <https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials>
+1. Try the recommendations in the official docs for [sharing git credentials](<https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials>)
 1. If the previous step doesn't work, try the below method, that includes a bit of additional code to add keys to the SSH agent.
 
-Add the following to your ~/.bash_profile or ~/.profile or ~/.zprofile (by default most WSL users will have only a ~/.profile) so an ssh-agent will be started when needed and default keys will be added to the agent. The ssh-agent will then automatically forward keys to your Dev Container when its launched.
+Add the following to your ~/.bash_profile, ~/.profile, ~/.zprofile or similar (by default most WSL users will have only a ~/.profile) so an ssh-agent will be started when needed and default keys will be added to the agent. The ssh-agent will then automatically forward keys to your Dev Container when its launched.
 
 ```sh
 # this part taken from https://code.visualstudio.com/remote/advancedcontainers/sharing-git-credentials

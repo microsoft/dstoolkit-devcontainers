@@ -2,9 +2,9 @@
 
 ## Introduction
 
-This subdirectory contains a configured and tested lightweight Azure Machine Learning (AML) CLI v2 compopnents-based ML pipeline example. Read more about components-based pipelines here: <https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-component-pipelines-cli?view=azureml-api-2>. This example allows you to seemlessly move from working in the the local Dev Container environment to a cloud based environment with the exact same Dockerfile.
+This subdirectory contains a configured and tested lightweight Azure Machine Learning (AML) CLI v2 compopnents-based ML pipeline example. Read more about [AML components-based pipelines](<https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-component-pipelines-cli?view=azureml-api-2>). This example allows you to seemlessly move from working in the the local Dev Container environment to a cloud based environment with the exact same Dockerfile.
 
-Two example files are provided, `train.py` and `inference.py` which contains a pytorch example (taken from <https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html?highlight=cifar10>) for training a small conv-net on CIFAR10 and performing inference and evaluation with the trained model. These files are also wrapped in AML components (`aml_example/aml_components/train-component.yaml` and `aml_example/aml_components/inference-component.yaml`) which is then composed in a AML components-based pipeline in `aml_example/sample-aml-components-pipeline.yml`. The example can thus be run locally inside the Dev Container or in the cloud in AML, with the exact same environment. See the sections below for how to setup and run the example in AML.
+Two example files are provided, `train.py` and `inference.py` which contains a pytorch example (taken from [this pytorch tutorial](<https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html?highlight=cifar10>)) for training a small conv-net on CIFAR10 and performing inference and evaluation with the trained model. These files are also wrapped in AML components (`aml_example/aml_components/train-component.yaml` and `aml_example/aml_components/inference-component.yaml`) which is then composed in a AML components-based pipeline in `aml_example/sample-aml-components-pipeline.yml`. The example can thus be run locally inside the Dev Container or in the cloud in AML, with the exact same environment. See the sections below for how to setup and run the example in AML.
 
 As an exmaple workflow, you could work with the sample `train.py` and `inference.py` with your local CPU/GPU to get things working and then easily transition to running the same scripts in an AML cloud environment that has a more powerful GPU.
 
@@ -18,7 +18,7 @@ Before you try out the AML example, you will need setup an Azure account with th
 
 ## Using the AML CLI v2
 
-The Dev Container environment comes configured with Azure CLI and the AML CLI v2 extension. See this link for more information: <https://learn.microsoft.com/en-us/azure/machine-learning/how-to-configure-cli?view=azureml-api-2&tabs=public>. 
+The Dev Container environment comes configured with Azure CLI and the AML CLI v2 extension. See  [how to configure AML CLI](<https://learn.microsoft.com/en-us/azure/machine-learning/how-to-configure-cli?view=azureml-api-2&tabs=public>) for background information.
 
 With your Dev Container launched for `src/sample_pytorch_gpu_project`, verify that the AML CLI v2 extension is installed with:
 
@@ -35,7 +35,7 @@ az login
 Alternatively, you may need to specify the specific tenant that contains the Subscription and Workspace you will be running AML jobs in:
 
 ```bash
-az login --use-device-code --tenant azurelsis.onmicrosoft.com
+az login --use-device-code --tenant <YOUR_AZURE_TENANT_DOMAIN>
 ```
 
 Note to avoid manually specifying `-g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>` in the `az` commands below you can place these secrets in your `.env` file in the root of the repository (not tracked by git). You will need to relaunch the Dev Container after adding these.
