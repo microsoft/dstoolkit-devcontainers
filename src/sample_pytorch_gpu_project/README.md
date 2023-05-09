@@ -56,18 +56,18 @@ After logging into the AML CLI you will need to setup a AML compute cluster and 
 
 There are two options provided to setup compute clusters, a GPU cluster (using `aml_example/aml_setup/create-gpu-compute.yaml`) and a CPU cluster (using `aml_example/aml_setup/create-cpu-compute.yaml`). To run the example we will just create the GPU cluster, but in the future you may create both GPU and CPU clusters and then use a mix of compute across different types of scripts (eg. GPU for training and CPU for an evaluation script).
 
-First update the `location` and `size` parameters in the  `aml_example/aml_setup/create-gpu-compute.yaml` to match the requirements for your subscription and AML workspace:
+1. First update the `location` and `size` parameters in the  `aml_example/aml_setup/create-gpu-compute.yaml` to match the requirements for your subscription and AML workspace:
 
-```yaml
-size: Standard_NC6
-location: centralus
-```
+    ```yaml
+    size: Standard_NC6
+    location: centralus
+    ```
 
-Create the compute cluster from the command line inside the Dev Container:
+2. Create the compute cluster from the command line inside the Dev Container:
 
-```bash
-az ml compute create -f aml_example/aml_setup/create-gpu-compute.yaml -g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
-```
+    ```bash
+    az ml compute create -f aml_example/aml_setup/create-gpu-compute.yaml -g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
+    ```
 
 ### 4b. Setup the AML custom environment
 
