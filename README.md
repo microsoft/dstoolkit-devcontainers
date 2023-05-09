@@ -1,6 +1,6 @@
 # Dev Containers for ML feasibility study with VS Code
 
-## Table of Contents
+## Contents
 
 - [Introduction and Overview](#introduction-and-overview)
   - [Features](#features)
