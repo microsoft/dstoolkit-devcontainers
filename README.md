@@ -13,6 +13,7 @@ A machine learning and data science project template that makes it easy to work 
   - [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
   - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
 - [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
+- [AML Example](#aml-example)
 - [Directory Structure](#directory-structure)
   - [notebooks directory vs src directory](#notebooks-directory-vs-src-directory)
 - [Future Roadmap and TODOs](#future-roadmap-and-todos)
@@ -142,7 +143,7 @@ ssh-add
 
 ## AML Example
 
-An Azure Machine Learning (AML) example is provided under `src/sample_pytorch_gpu_example`. The example is a AML Components-based ML pipeline, that runs a pytorch based training step followed by a inference/evaluation step. This example shows the seemless transition of moving from a local run (inside the Dev Container) of pytorch based training/inference and running that in the cloud in the exact same Docker environment but with flexible compute options. See the README under `src/sample_pytorch_gpu_example` for a detailed explanation and instructions of the example code.
+An Azure Machine Learning (AML) example is provided under `src/sample_pytorch_gpu_example`. The example is a AML Components-based ML pipeline, that runs a pytorch based training step followed by a inference/evaluation step. This example shows the seemless transition of moving from a local run (inside the Dev Container) of pytorch based training/inference and running in the cloud in the exact same Docker environment with flexible compute options. See the [AML Components-based Pipeline Example README](src/sample_pytorch_gpu_project/README.md) for a detailed explanation and instructions of the example code.
 
 ## Directory Structure
 
