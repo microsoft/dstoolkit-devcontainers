@@ -210,6 +210,7 @@ ssh-add
 - Add Docker build caching to Azure DevOps MS hosted CI pipeline
 - Add tensorflow GPU example
 - Investigate making `src/common` installed with `pip -e`
+- Use a common requirements.txt for code quality dependencies
 
 ## Contributing
 
