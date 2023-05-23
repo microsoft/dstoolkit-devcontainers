@@ -90,7 +90,7 @@ After going through the [setup steps](#setting-up-aml-for-running-a-pipeline), y
 Start the pipeline experiment from the command line inside the Dev Container:
 
 ```bash
-az ml job create -f aml_example/aml_setup/sample-aml-components-pipeline.yml --web --g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
+az ml job create -f aml_example/sample-aml-components-pipeline.yml --web --g <YOU_AML_RESOURCE_GROUP> -w <YOU_AML_WORKSPACE>
 ```
 
 ## Explanation of AML Files
