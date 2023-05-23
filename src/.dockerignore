@@ -12,3 +12,4 @@
 **/venv
 **/*.md
 **/train_artifacts
+**/mlruns
