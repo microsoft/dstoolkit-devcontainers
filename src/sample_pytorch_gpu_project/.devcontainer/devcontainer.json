@@ -27,7 +27,7 @@
         ],
         "python.linting.mypyEnabled": true,
         "python.testing.pytestEnabled": true,
-        "python.pythonPath": "/opt/conda/envs/noise-dl/bin/python",
+        "python.pythonPath": "python",
         "[python]": {
             "editor.formatOnSave": true,
             "editor.codeActionsOnSave": {
