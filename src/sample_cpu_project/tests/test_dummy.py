@@ -1,4 +1,4 @@
-import sample_main
+from sample_cpu_project import sample_main
 
 
 def test_main():
