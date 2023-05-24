@@ -1,4 +1,4 @@
-import sample_main
+from sample_pytorch_gpu_project import sample_main
 
 
 def test_main():
