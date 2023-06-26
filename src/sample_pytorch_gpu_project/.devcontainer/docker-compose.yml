@@ -9,3 +9,10 @@ services:
       # Mount the root folder that contains .git
       - ../../..:/workspace:cached
     command: /bin/sh -c "while sleep 1000; do :; done"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
