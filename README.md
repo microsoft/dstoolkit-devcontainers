@@ -4,21 +4,25 @@ A machine learning and data science project template that makes it easy to work 
 
 ## Contents
 
-- [Introduction and Overview](#introduction-and-overview)
-  - [Features](#features)
-- [Getting Started](#getting-started)
-- [How to create a new directory under src with a new environment?](#how-to-create-a-new-directory-under-src-with-a-new-environment)
-- [Directory Structure](#directory-structure)
-  - [notebooks directory vs src directory](#notebooks-directory-vs-src-directory)
-- [AML Example](#aml-example)
-- [CI pipeline](#ci-pipeline)
-  - [Running all unit tests with ci-tests.sh](#running-all-unit-tests-with-ci-testssh)
-  - [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
-  - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
-- [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
-- [Future Roadmap and TODOs](#future-roadmap-and-todos)
-- [Contributing](#contributing)
-- [Trademarks](#trademarks)
+- [Dev Containers for ML feasibility study with VS Code](#dev-containers-for-ml-feasibility-study-with-vs-code)
+  - [Contents](#contents)
+  - [Introduction and Overview](#introduction-and-overview)
+    - [Features](#features)
+  - [Getting Started](#getting-started)
+    - [How to setup dev environment?](#how-to-setup-dev-environment)
+  - [How to create a new directory under src with a new environment](#how-to-create-a-new-directory-under-src-with-a-new-environment)
+  - [Directory Structure](#directory-structure)
+    - [`notebooks` directory vs `src` directory](#notebooks-directory-vs-src-directory)
+  - [AML Example](#aml-example)
+  - [CI Pipeline](#ci-pipeline)
+    - [Running all unit tests with `ci-tests.sh`](#running-all-unit-tests-with-ci-testssh)
+    - [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
+      - [Choosing between Azure DevOps Microsoft-hosted vs Self-hosted CI Pipeline](#choosing-between-azure-devops-microsoft-hosted-vs-self-hosted-ci-pipeline)
+    - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
+  - [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
+  - [Future Roadmap and TODOs](#future-roadmap-and-todos)
+  - [Contributing](#contributing)
+  - [Trademarks](#trademarks)
 
 ## Introduction and Overview
 
@@ -59,8 +63,7 @@ This section provides a comprehensive guide on how to set up a development envir
 ## How to create a new directory under src with a new environment
 
 1. Copy `src/sample_cpu_project/` under `src` and rename it. If you need gpu environment, base off of `src/sample_pytorch_gpu_project` instead
-1. Edit `.devcontainer/devcontainer.json` under the new directory and replace `sample_cpu_project` with the new directory name
-1. Edit `.devcontainer/docker-compose.yml` under the new directory and replace `sample_cpu_project` with the new directory name
+1. Edit `.devcontainer/devcontainer.json` under the new directory and replace `sample_cpu_project` with the new directory name in `"name"` and `"workspaceFolder"`
 1. Update `COPY sample_cpu_project/.devcontainer/requirements.txt` in `Dockerfile` with a new path
 1. Update other parts of `Dockerfile` if you need
 1. Update `requirements.txt` if you need
@@ -82,8 +85,7 @@ This section gives you overview of the directory structure of this template. Onl
 ├── notebooks                      # Setup process is covered in Section: How to setup dev environment?
 │   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
 │   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
-│   │   ├── docker-compose.yml     # referred in devcontainer.json
-│   │   ├── Dockerfile             # referred in docker-compose.yml
+│   │   ├── Dockerfile             # referred in devcontainer.json
 │   │   └── requirements.txt       # includes python package list for notebooks. used in Dockerfile
 │   └── sample_notebook.py         # example of interactive python script
 ├── pytest.ini                     # Setting file for pytest
@@ -93,8 +95,7 @@ This section gives you overview of the directory structure of this template. Onl
     ├── sample_cpu_project         # cpu project example. Setup process is covered in Section: How to setup dev environment?
     │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
     │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
-    │   │   ├── docker-compose.yml # referred in devcontainer.json
-    │   │   ├── Dockerfile         # referred in docker-compose.yml. Supports only CPU
+    │   │   ├── Dockerfile         # referred in devcontainer.json. Supports only CPU
     │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
     │   ├── sample_main.py         
     │   └── tests                  # pytest scripts for sample_cpu_project goes here
@@ -103,8 +104,7 @@ This section gives you overview of the directory structure of this template. Onl
         ├── README.md              # README for AML example contained in sample_pytorch_gpu_project
         ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
         │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
-        │   ├── docker-compose.yml # referred in devcontainer.json
-        │   ├── Dockerfile         # referred in docker-compose.yml. Supports GPU
+        │   ├── Dockerfile         # referred in devcontainer.json. Supports GPU
         │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
         ├── aml_example/           # Sample AML CLI v2 Components-based pipeline, including setup YAML. See sample_pytorch_gpu_project/README for full details of files in this directory.
         ├── sample_main.py        
