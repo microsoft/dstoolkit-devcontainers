@@ -1,10 +1,11 @@
 {
     "name": "sample_cpu_project",
-    "dockerComposeFile": [
-        "docker-compose.yml"
-    ],
-    "workspaceFolder": "/workspace/src/sample_cpu_project",
-    "service": "sample_cpu_project",
+    "build": {
+        // use src directory as build context so that common/requirements.txt is accessible during build
+        "context": "../../",
+        "dockerfile": "Dockerfile"
+    },
+    "workspaceFolder": "/workspaces/dstoolkit-devcontainers/src/sample_cpu_project",
     "shutdownAction": "none",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
@@ -15,6 +16,10 @@
             "username": "devuser",
         },
     },
+    "runArgs": [
+        "--env-file",
+        "../../.env"
+    ],
     "customizations": {
         "vscode": {
             "extensions": [
@@ -53,7 +58,7 @@
                 ],
                 "python.linting.mypyEnabled": true,
                 "python.testing.pytestEnabled": true,
-                "python.pythonPath": "python",
+                "python.defaultInterpreterPath": "python",
                 "[python]": {
                     "editor.formatOnSave": true,
                     "editor.codeActionsOnSave": {
