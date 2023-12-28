@@ -16,5 +16,9 @@ USER $USERNAME
 # make all python tools installed by pip accesible
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
 RUN pip install pip --upgrade
-COPY requirements.txt .
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# install notebooks related depencencies
+COPY notebooks/.devcontainer/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

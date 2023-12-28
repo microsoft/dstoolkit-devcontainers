@@ -2,7 +2,7 @@
     "name": "sample_pytorch_gpu_project",
     "build": {
         // use src directory as build context so that common/requirements.txt is accessible during build
-        "context": "../../",
+        "context": "../../../",
         "dockerfile": "Dockerfile"
     },
     "workspaceFolder": "/workspaces/dstoolkit-devcontainers/src/sample_pytorch_gpu_project",
