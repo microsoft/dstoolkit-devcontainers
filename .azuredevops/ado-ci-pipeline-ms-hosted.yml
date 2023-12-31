@@ -28,6 +28,7 @@ steps:
       source env/bin/activate
       python -m pip install --upgrade pip
       pip install -r requirements-dev.txt
+      pip install pytest-azurepipelines
     displayName: "Install requirements"
 
   - bash: |
