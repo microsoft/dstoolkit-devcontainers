@@ -31,6 +31,7 @@ steps:
       pip install pytest-azurepipelines
     displayName: "Install requirements"
 
+  # files under venv will be automatically excluded from ruff check by default https://docs.astral.sh/ruff/settings/#exclude
   - bash: |
       source venv/bin/activate
       ruff check
