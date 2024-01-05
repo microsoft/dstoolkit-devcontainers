@@ -16,3 +16,14 @@ select = ["E", "F", "B", "S", "I", "N"]
 "**/tests/**/test_*.py" = [
     "S101", # asserts allowed in tests
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+
+[tool.coverage.run]
+omit = [
+    # ignore all notebooks in src
+    "*/notebooks/*",
+    # ignore all tests in src
+    "*/tests/*",
+]
