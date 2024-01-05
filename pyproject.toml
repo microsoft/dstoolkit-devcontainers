@@ -1,6 +1,6 @@
 [tool.ruff]
 target-version = "py39"
-extend-exclude = ["^notebooks"]
+extend-exclude = ["notebooks"]
 
 [tool.ruff.lint]
 # On top of the default `select` (`E`, `F`), 
