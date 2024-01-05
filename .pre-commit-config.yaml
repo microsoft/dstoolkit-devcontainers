@@ -19,6 +19,6 @@ repos:
         name: ruff lint
         entry: ruff check --force-exclude
         language: system
-        types: [python, pyi, jupyter]
+        types_or: [python, pyi, jupyter]
         exclude: ^notebooks
         require_serial: true
