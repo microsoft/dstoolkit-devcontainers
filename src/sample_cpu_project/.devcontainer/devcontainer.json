@@ -20,6 +20,7 @@
         "--env-file",
         "../../.env"
     ],
+    "postCreateCommand": "pre-commit install --overwrite",
     "customizations": {
         "vscode": {
             "extensions": [
