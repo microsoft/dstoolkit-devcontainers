@@ -36,8 +36,8 @@ steps:
       versionSpec: 3.9
 
   - script: |
-      python -m venv env
-      source env/bin/activate
+      python -m venv venv
+      source venv/bin/activate
       python -m pip install --upgrade pip
       pip install -r requirements-dev.txt
       pip install pytest-azurepipelines
@@ -50,15 +50,10 @@ steps:
       version: '6.x'
 
   - bash: |
-      source env/bin/activate
-      flake8 --max-line-length 88 --exclude env,notebooks
-    displayName: "Run flake8 tests"
+      source venv/bin/activate
+      ruff check
+    displayName: "Run ruff linter"
     
-  - bash: |
-      source env/bin/activate
-      bandit -r --configfile bandit.yml src notebooks
-    displayName: "Run bandit tests"
-
   - task: Bash@3
     inputs:
       targetType: 'filePath'

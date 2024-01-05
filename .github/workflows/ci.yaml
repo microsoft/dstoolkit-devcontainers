@@ -28,20 +28,15 @@ jobs:
 
       - name: Install requirements
         run: |
-          python -m venv env
-          source env/bin/activate
+          python -m venv venv
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Run flake8 tests
+      - name: Run ruff linter
         run: |
-          source env/bin/activate
-          flake8 --max-line-length 88 --exclude env,notebooks
-
-      - name: Run bandit tests
-        run: |
-          source env/bin/activate
-          bandit -r --configfile bandit.yml src notebooks
+          source venv/bin/activate
+          ruff check
 
       - name: Run pytest in docker containers
         run: ./ci-tests.sh
