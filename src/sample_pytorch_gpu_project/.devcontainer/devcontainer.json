@@ -1,7 +1,7 @@
 {
     "name": "sample_pytorch_gpu_project",
     "build": {
-        // use src directory as build context so that common/requirements.txt is accessible during build
+        // use root directory as build context so that requirements-dev.txt is accessible during build
         "context": "../../../",
         "dockerfile": "Dockerfile"
     },
@@ -12,6 +12,7 @@
             "installZsh": true,
             "configureZshAsDefaultShell": true,
             "installOhMyZsh": true,
+            "upgradePackages": false,
             "username": "devuser",
         },
     },
@@ -36,9 +37,6 @@
                 "marchiore.csvtomarkdown",
                 "mechatroner.rainbow-csv",
                 "ms-azure-devops.azure-pipelines",
-                "ms-python.black-formatter",
-                "ms-python.flake8",
-                "ms-python.isort",
                 "ms-python.mypy-type-checker",
                 "ms-python.python",
                 "ms-toolsai.jupyter",
@@ -47,34 +45,27 @@
                 "redhat.vscode-yaml",
                 "streetsidesoftware.code-spell-checker",
                 "timonwong.shellcheck",
+                "charliermarsh.ruff",
             ],
             "settings": {
                 "autoDocstring.docstringFormat": "google",
-                "flake8.args": [
-                    "--max-line-length=88"
-                ],
-                "flake8.importStrategy": "fromEnvironment",
-                "isort.args": [
-                    "--profile",
-                    "black"
-                ],
-                "isort.importStrategy": "fromEnvironment",
                 "mypy-type-checker.importStrategy": "fromEnvironment",
-                "python.linting.banditEnabled": true,
-                "python.linting.banditArgs": [
-                    "-r",
-                    "--configfile=${workspaceFolder}/../../bandit.yml"
-                ],
                 "python.testing.pytestEnabled": true,
                 "python.defaultInterpreterPath": "/usr/local/bin/python",
                 "[python]": {
                     "editor.codeActionsOnSave": {
-                        "source.organizeImports": true
+                        "source.organizeImports": true,
+                        "source.fixAll": true
                     },
-                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.defaultFormatter": "charliermarsh.ruff",
                     "editor.formatOnSave": true,
                     "files.trimTrailingWhitespace": true
                 },
+                "notebook.formatOnSave.enabled": true,
+                "notebook.codeActionsOnSave": {
+                    "source.fixAll": true,
+                    "source.organizeImports": true
+                }
             },
         }
     },
