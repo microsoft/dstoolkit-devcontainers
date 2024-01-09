@@ -1,7 +1,7 @@
 {
     "name": "sample_pytorch_gpu_project",
     "build": {
-        // use src directory as build context so that common/requirements.txt is accessible during build
+        // use root directory as build context so that requirements-dev.txt is accessible during build
         "context": "../../../",
         "dockerfile": "Dockerfile"
     },
