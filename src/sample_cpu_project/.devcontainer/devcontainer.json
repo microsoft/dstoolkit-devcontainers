@@ -1,8 +1,8 @@
 {
     "name": "sample_cpu_project",
     "build": {
-        // use src directory as build context so that common/requirements.txt is accessible during build
-        "context": "../../",
+        // use root directory as build context so that requirements-dev.txt is accessible during build
+        "context": "../../../",
         "dockerfile": "Dockerfile"
     },
     "workspaceFolder": "/workspaces/dstoolkit-devcontainers/src/sample_cpu_project",

@@ -1,7 +1,8 @@
 {
     "name": "notebooks",
     "build": {
-        "context": ".",
+        // use root directory as build context so that requirements-dev.txt is accessible during build
+        "context": "../../",
         "dockerfile": "Dockerfile"
     },
     "workspaceFolder": "/workspaces/dstoolkit-devcontainers/notebooks",

@@ -8,8 +8,10 @@
 **/.vscode
 **/junit
 **/.azuredevops
+**/.github
 **/.venv
 **/venv
 **/*.md
 **/train_artifacts
 **/mlruns
+**/.env

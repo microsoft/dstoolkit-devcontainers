@@ -15,12 +15,18 @@ USER $USERNAME
 
 # make all python tools installed by pip accesible
 ENV PATH=$PATH:/home/devuser/.local/bin
+
 RUN pip install pip --upgrade
-COPY sample_cpu_project/.devcontainer/requirements.txt .
+
+COPY src/sample_cpu_project/.devcontainer/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# install common module related pacakages
+COPY src/common/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # install python tools
-COPY common/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
 
 
