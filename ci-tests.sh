@@ -50,7 +50,7 @@ for test_dir_parent in $(find "${repo_root}/src" -type d -name 'tests' -exec dir
                     -o junit_suite_name=$test_dir_parent \
                     --doctest-modules \
                     --cov \
-                    --cov-config=/workspace/.coveragerc \
+                    --cov-config=/workspace/pyproject.toml \
                     --cov-report=xml:/tmp/artifact_output/coverage.xml \
                     --cov-append \
                     /workspace/src/$test_dir_parent; \

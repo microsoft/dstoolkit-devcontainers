@@ -3,36 +3,21 @@
 repos:
   - repo: local
     hooks:
-      - id: black
-        name: black
-        description: "Black: The uncompromising Python code formatter"
-        entry: black
-        language: system
-        require_serial: true
-        types_or: [python, pyi]
-        # when updating black args, also update .vscode/settings.json to match
-      - id: isort
-        name: isort
-        entry: isort
+      - id: ruff sort imports
+        name: ruff sort imports
+        entry: ruff check --select I --fix
         require_serial: true
         language: system
-        types_or: [cython, pyi, python]
-        args: [--profile, black]
-      - id: flake8
-        name: flake8
-        description: "`flake8` is a command-line utility for enforcing style consistency across Python projects."
-        entry: flake8
+        types_or: [python, pyi, jupyter]
+      - id: ruff format
+        name: ruff format
+        entry: ruff format
         language: system
-        types: [python]
-        # when updating flake args, also update .vscode/settings.json or "python.linting.flake8Args" in devcontainer.json to match
-        args: [--max-line-length=88]
-        exclude: ^notebooks
         require_serial: true
-      - id: bandit
-        name: bandit
-        description: "Bandit is a tool for finding common security issues in Python code"
-        entry: bandit
+        types_or: [python, pyi, jupyter]
+      - id: ruff lint
+        name: ruff lint
+        entry: ruff check --force-exclude
         language: system
-        types: [python]
+        types_or: [python, pyi, jupyter]
         require_serial: true
-        args: [-r, --configfile=bandit.yml]
