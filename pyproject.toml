@@ -12,9 +12,12 @@ extend-exclude = ["notebooks"]
 select = ["E", "F", "B", "S", "I", "N"]
 
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "**/tests/**/test_*.py" = [
     "S101", # asserts allowed in tests
+]
+"**/*.ipynb" = [
+    "B018", # allow notebooks printing out variables in the mid cell with variable names only
 ]
 
 [tool.pytest.ini_options]
