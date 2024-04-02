@@ -28,6 +28,7 @@
                 "DavidAnson.vscode-markdownlint",
                 "donjayamanne.githistory",
                 "donjayamanne.python-environment-manager",
+                "donjayamanne.vscode-default-python-kernel",
                 "eamodio.gitlens",
                 "GitHub.copilot",
                 "github.copilot-chat",
