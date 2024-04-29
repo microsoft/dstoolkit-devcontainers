@@ -62,7 +62,7 @@ This section provides a comprehensive guide on how to set up a development envir
 ## How to create a new directory under src with a new environment
 
 1. Copy `src/sample_cpu_project/` under `src` and rename it. If you need gpu environment, base off of `src/sample_pytorch_gpu_project` instead
-1. Edit `.devcontainer/devcontainer.json` under the new directory and replace `sample_cpu_project` with the new directory name in `"name"` and `"workspaceFolder"`
+1. Edit `.devcontainer/devcontainer.json` under the new directory and replace `sample_cpu_project` with the new directory name in `"name"`
 1. Update `COPY sample_cpu_project/.devcontainer/requirements.txt` in `Dockerfile` with a new path
 1. Update other parts of `Dockerfile` if you need
 1. Update `requirements.txt` if you need

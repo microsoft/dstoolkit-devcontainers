@@ -5,7 +5,6 @@
         "context": "../../",
         "dockerfile": "Dockerfile"
     },
-    "workspaceFolder": "/workspaces/dstoolkit-devcontainers/notebooks",
     "shutdownAction": "none",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {

@@ -5,7 +5,6 @@
         "context": "../../../",
         "dockerfile": "Dockerfile"
     },
-    "workspaceFolder": "/workspaces/dstoolkit-devcontainers/src/sample_pytorch_gpu_project",
     "shutdownAction": "none",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
