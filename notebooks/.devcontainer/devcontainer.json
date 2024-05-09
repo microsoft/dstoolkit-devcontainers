@@ -1,11 +1,9 @@
 {
-    "name": "notebooks",
     "build": {
         // use root directory as build context so that requirements-dev.txt is accessible during build
         "context": "../../",
         "dockerfile": "Dockerfile"
     },
-    "workspaceFolder": "/workspaces/dstoolkit-devcontainers/notebooks",
     "shutdownAction": "none",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
