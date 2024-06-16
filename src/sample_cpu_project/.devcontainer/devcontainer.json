@@ -44,6 +44,7 @@
                 "streetsidesoftware.code-spell-checker",
                 "timonwong.shellcheck",
                 "charliermarsh.ruff",
+                "grapecity.gc-excelviewer"
             ],
             "settings": {
                 "autoDocstring.docstringFormat": "google",
@@ -52,8 +53,8 @@
                 "python.defaultInterpreterPath": "/usr/local/bin/python",
                 "[python]": {
                     "editor.codeActionsOnSave": {
-                        "source.organizeImports": true,
-                        "source.fixAll": true
+                        "source.fixAll": "explicit",
+                        "source.organizeImports.ruff": "explicit"
                     },
                     "editor.defaultFormatter": "charliermarsh.ruff",
                     "editor.formatOnSave": true,
@@ -61,9 +62,9 @@
                 },
                 "notebook.formatOnSave.enabled": true,
                 "notebook.codeActionsOnSave": {
-                    "source.fixAll": true,
-                    "source.organizeImports": true
-                }
+                    "notebook.source.fixAll": "explicit",
+                    "notebook.source.organizeImports": "explicit"
+                },
             },
         }
     },
