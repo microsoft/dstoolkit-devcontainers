@@ -6,7 +6,8 @@
 version: 2
 updates:
   - package-ecosystem: "pip"
-    directory: "/"
+    directories:
+      - "**/*"
     schedule:
       interval: "monthly"
     groups:
@@ -21,6 +22,15 @@ updates:
     schedule:
       interval: "monthly"
   - package-ecosystem: "devcontainers"
-    directory: "/"
+    directories:
+      - "**/*"
     schedule:
       interval: "monthly"
+  - package-ecosystem: "docker"
+    directories:
+      - "**/*"
+    schedule:
+      interval: "monthly"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
