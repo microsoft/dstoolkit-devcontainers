@@ -1,4 +1,4 @@
-FROM python:3.9.19
+FROM python:3.11.10
 # create non-root user and set the default user
 ARG USERNAME=devuser
 ARG USER_UID=1000
@@ -15,7 +15,7 @@ USER $USERNAME
 
 # make all python tools installed by pip accesible
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
-RUN pip install pip --upgrade
+RUN pip install --no-cache-dir pip --upgrade
 COPY requirements-dev.txt .
 RUN pip install --no-cache-dir -r requirements-dev.txt
 
