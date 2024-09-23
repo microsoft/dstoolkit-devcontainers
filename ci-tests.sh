@@ -42,7 +42,7 @@ for test_dir_parent in $(find "${repo_root}/src" -type d -name 'tests' -exec dir
             --env COVERAGE_FILE=/tmp/artifact_output/.coverage \
             "${test_dir_parent}" \
             /bin/bash -ec '
-                mkdir -p /tmp/artifact_output/$test_dir_parent; \
+                sudo mkdir -p /tmp/artifact_output/$test_dir_parent; \
                 env "PATH=$PATH" \
                 env "PYTHONPATH=/workspace/src/$test_dir_parent:$PYTHONPATH" \
                 pytest \
