@@ -35,17 +35,17 @@ for test_dir_parent in $(find "${repo_root}/src" -type d -name 'tests' -exec dir
            - exit with pytest exit code to ensure script exits with non-zero exit code if pytest fails, this ensure the CI
              pipeline in ADO fails if any tests fail.
         '
-        docker run  \
+        sudo docker run  \
             -v "${repo_root}:/workspace" \
             -v "/tmp:/tmp" \
             --env test_dir_parent="$test_dir_parent" \
             --env COVERAGE_FILE=/tmp/artifact_output/.coverage \
             "${test_dir_parent}" \
             /bin/bash -ec '
-                sudo mkdir -p /tmp/artifact_output/$test_dir_parent; \
+                mkdir -p /tmp/artifact_output/$test_dir_parent; \
                 env "PATH=$PATH" \
                 env "PYTHONPATH=/workspace/src/$test_dir_parent:$PYTHONPATH" \
-                sudo pytest \
+                pytest \
                     --junitxml=/tmp/artifact_output/$test_dir_parent/test-results-$test_dir_parent.xml \
                     -o junit_suite_name=$test_dir_parent \
                     --doctest-modules \
