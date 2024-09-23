@@ -45,7 +45,7 @@ for test_dir_parent in $(find "${repo_root}/src" -type d -name 'tests' -exec dir
                 sudo mkdir -p /tmp/artifact_output/$test_dir_parent; \
                 env "PATH=$PATH" \
                 env "PYTHONPATH=/workspace/src/$test_dir_parent:$PYTHONPATH" \
-                pytest \
+                sudo pytest \
                     --junitxml=/tmp/artifact_output/$test_dir_parent/test-results-$test_dir_parent.xml \
                     -o junit_suite_name=$test_dir_parent \
                     --doctest-modules \
