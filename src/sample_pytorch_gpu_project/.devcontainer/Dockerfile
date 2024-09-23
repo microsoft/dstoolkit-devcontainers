@@ -1,5 +1,5 @@
 # leverage multi-stage build and copy python binaries to cuda container
-FROM python:3.9.16 as python
+FROM python:3.9.20 as python
 FROM nvidia/cuda:12.0.1-cudnn8-runtime-ubuntu20.04
 COPY --from=python /usr/local/ /usr/local/
 
