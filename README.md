@@ -20,7 +20,7 @@ A machine learning and data science project template that makes it easy to work 
       - [Choosing between Azure DevOps Microsoft-hosted vs Self-hosted CI Pipeline](#choosing-between-azure-devops-microsoft-hosted-vs-self-hosted-ci-pipeline)
     - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
   - [Using SSH Keys in Dev Containers](#using-ssh-keys-in-dev-containers)
-  - [Future Roadmap and TODOs](#future-roadmap-and-todos)
+  - [Future Roadmap](#future-roadmap)
   - [Contributing](#contributing)
   - [Trademarks](#trademarks)
 
@@ -202,16 +202,14 @@ fi
 ssh-add
 ```
 
-## Future Roadmap and TODOs
+## Future Roadmap
 
 - Add Docker build caching to Azure DevOps MS hosted CI pipeline
-- Add tensorflow GPU example
 - Investigate making `src/common` installed with `pip -e`
-- Use a common requirements.txt for code quality dependencies
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
 
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
