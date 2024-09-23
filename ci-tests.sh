@@ -35,7 +35,7 @@ for test_dir_parent in $(find "${repo_root}/src" -type d -name 'tests' -exec dir
            - exit with pytest exit code to ensure script exits with non-zero exit code if pytest fails, this ensure the CI
              pipeline in ADO fails if any tests fail.
         '
-        sudo docker run  \
+        docker run  \
             -v "${repo_root}:/workspace" \
             -v "/tmp:/tmp" \
             --env test_dir_parent="$test_dir_parent" \
