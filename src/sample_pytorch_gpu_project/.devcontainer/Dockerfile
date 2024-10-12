@@ -1,6 +1,6 @@
 # leverage multi-stage build and copy python binaries to cuda container
-FROM python:3.9.16 as python
-FROM nvidia/cuda:12.0.1-cudnn8-runtime-ubuntu20.04
+FROM python:3.11.10 as python
+FROM nvidia/cuda:12.6.1-cudnn-runtime-ubuntu24.04
 COPY --from=python /usr/local/ /usr/local/
 
 RUN apt-get update \
@@ -15,7 +15,8 @@ RUN wget -qO- https://aka.ms/InstallAzureCLIDeb | bash
 
 # create non-root user and set the default user
 ARG USERNAME=devuser
-ARG USER_UID=1000
+# uid=1000 is already used for ubuntu so use 1010 instead
+ARG USER_UID=1010
 ARG USER_GID=$USER_UID
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
