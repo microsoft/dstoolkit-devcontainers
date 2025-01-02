@@ -1,4 +1,4 @@
-FROM python:3.11.10
+FROM python:3.11.11
 # create non-root user and set the default user
 ARG USERNAME=devuser
 ARG USER_UID=1010
