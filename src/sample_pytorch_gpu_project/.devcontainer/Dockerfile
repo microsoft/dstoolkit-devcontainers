@@ -1,6 +1,6 @@
 # leverage multi-stage build and copy python binaries to cuda container
 FROM python:3.11.11 as python
-FROM nvidia/cuda:12.6.2-cudnn-runtime-ubuntu24.04
+FROM nvidia/cuda:12.6.3-cudnn-runtime-ubuntu24.04
 COPY --from=python /usr/local/ /usr/local/
 
 RUN apt-get update \
