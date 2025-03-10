@@ -37,7 +37,7 @@ jobs:
         # files under venv will be automatically excluded from ruff check by default https://docs.astral.sh/ruff/settings/#exclude
         run: |
           source venv/bin/activate
-          ruff check
+          ruff check --output-format github
 
       - name: Run pytest in docker containers
         run: ./ci-tests.sh
