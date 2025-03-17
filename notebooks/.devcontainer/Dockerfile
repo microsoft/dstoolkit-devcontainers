@@ -21,9 +21,9 @@ ENV PATH=$PATH:/home/$USERNAME/.local/bin
 ENV UV_COMPILE_BYTECODE=1
 # This prevents uv from creating venv but instead makes it use the system python in container
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
+ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 RUN sudo chown -R $USERNAME:$USERNAME /usr/local
 
 # install notebooks related dependencies & python dev tools
 COPY notebooks/.devcontainer/pyproject.toml notebooks/.devcontainer/uv.lock ./
-# TODO: how to set project path with ENV?
-RUN uv sync --no-cache --project .devcontainer/pyproject.toml --frozen
+RUN uv sync --no-cache --project $UV_PROJECT_FILE --frozen
