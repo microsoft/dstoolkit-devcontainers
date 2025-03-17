@@ -1,4 +1,6 @@
 FROM python:3.11.11
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 # create non-root user and set the default user
 ARG USERNAME=devuser
 ARG USER_UID=1010
@@ -13,12 +15,15 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && rm -rf /var/lib/apt/lists/*
 USER $USERNAME
 
-# make all python tools installed by pip accesible
+# make all python tools installed by uv accessible
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
-RUN pip install --no-cache-dir pip --upgrade
-COPY requirements-dev.txt .
-RUN pip install --no-cache-dir -r requirements-dev.txt
+# it tends to improve startup time (at the cost of increased installation time)
+ENV UV_COMPILE_BYTECODE=1
+# This prevents uv from creating venv but instead makes it use the system python in container
+ENV UV_PROJECT_ENVIRONMENT=/usr/local
+RUN sudo chown -R $USERNAME:$USERNAME /usr/local
 
-# install notebooks related depencencies
-COPY notebooks/.devcontainer/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# install notebooks related dependencies & python dev tools
+COPY notebooks/.devcontainer/pyproject.toml notebooks/.devcontainer/uv.lock ./
+# TODO: how to set project path with ENV?
+RUN uv sync --no-cache --project .devcontainer/pyproject.toml --frozen
