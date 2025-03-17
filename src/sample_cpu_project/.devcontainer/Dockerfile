@@ -24,7 +24,7 @@ ENV UV_PROJECT_ENVIRONMENT=/usr/local
 ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 RUN sudo chown -R $USERNAME:$USERNAME /usr/local
 
-# install notebooks related dependencies & python dev tools
+# install project dependencies & python dev tools
 COPY src/sample_cpu_project/.devcontainer/pyproject.toml src/sample_cpu_project/.devcontainer/uv.lock ./
 RUN uv sync --no-cache --project $UV_PROJECT_FILE --frozen
 
