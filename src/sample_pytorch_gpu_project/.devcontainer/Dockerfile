@@ -1,6 +1,6 @@
-# leverage multi-stage build and copy python binaries to cuda container
+# leverage multi-stage build and copy python binaries to cuda-dl-base container
 FROM python:3.11.11 as python
-FROM nvidia/cuda:12.6.3-cudnn-runtime-ubuntu24.04
+FROM nvcr.io/nvidia/cuda-dl-base:24.12-cuda12.6-devel-ubuntu24.04
 COPY --from=python /usr/local/ /usr/local/
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
