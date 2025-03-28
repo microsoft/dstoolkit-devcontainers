@@ -77,15 +77,14 @@ This section provides a comprehensive guide on how to set up a development envir
 
 This solution uses [uv](https://docs.astral.sh/uv) to manage python packages in the dev container. `uv` is installed in the dev container and it is used to manage python packages in the dev container. `uv` is also used to create a lock file (`uv.lock`) that contains the list of all python packages and their versions that are installed in the dev container. This lock file is used to ensure that the same versions of the packages are installed in all dev containers.
 
-1. Open the dev container you want to update
-
-# TODO: test if this works
+To manage Python packages within your active dev container, execute the following commands according to your needs:
 
 - To add a package: `uv add requests --project $UV_PROJECT_FILE`
-- To add a specific version of a package: `uv add 'requests==2.31.0'`
-- To remove a package: `uv remove requests`
-- To upgrade a package: `uv lock --upgrade-package requests`
+- To add a specific version of a package: `uv add 'requests==2.31.0' --project $UV_PROJECT_FILE`
+- To remove a package: `uv remove requests --project $UV_PROJECT_FILE`
+- To upgrade a package: `uv lock --upgrade-package requests --project $UV_PROJECT_FILE`
 
+These commands update both `pyproject.toml` and `uv.lock` files automatically.
 Check for more details at [The official documentation for how to manage dependencies in uv](https://docs.astral.sh/uv/guides/projects/#managing-dependencies)
 
 ## Directory Structure
