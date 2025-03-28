@@ -81,7 +81,7 @@ az ml environment create --file aml_example/aml_setup/create-env.yaml -g <YOU_AM
 
 #### **Updating the AML Custom Environment**
 
-Note the AML environment will need to be updated manually anytime new dependencies are added to `.devcontainer/requirements.txt` or `.devcontainer/Dockerfile` is updated. Also if you add new dependencies in `src/common/requirements.txt` that are needed in `src/sample_pytorch_gpu_project` then this will also require a environment rebuild. The environment can be rebuilt by running the exact same command used above to create the environment.
+Note the AML environment will need to be updated manually anytime new dependencies are added to `.devcontainer/pyproject.toml` or `.devcontainer/Dockerfile` is updated. Also if you add new dependencies in `src/common/requirements.txt` that are needed in `src/sample_pytorch_gpu_project` then this will also require an environment rebuild. The environment can be rebuilt by running the exact same command used above to create the environment.
 
 ## Run the AML Component Example
 
@@ -131,11 +131,11 @@ If you don't need to use any of the sample AML integrations follow the steps bel
     RUN az extension add --name ml
     ```
 
-2. Remove the `mlflow` dependencies in `.devcontainer/requirements.txt`:
+2. Remove the `mlflow` dependencies in `.devcontainer/pyproject.toml`:
 
     ```txt
-    mlflow==2.3.1
-    azureml-mlflow==1.50.0
+    mlflow==x.x.x
+    azureml-mlflow==x.x.x
     ```
 
     Note that you could keep the `mlflow` dependency if you want to keep `train.py` and `inference.py` for local runs with `mlflow` logging.
