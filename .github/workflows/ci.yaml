@@ -21,23 +21,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-
-      - name: Install requirements
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Run ruff linter
-        # files under venv will be automatically excluded from ruff check by default https://docs.astral.sh/ruff/settings/#exclude
         run: |
-          source venv/bin/activate
-          ruff check --output-format github
+          uvx ruff check --output-format github
 
       - name: Run pytest in docker containers
         run: ./ci-tests.sh
