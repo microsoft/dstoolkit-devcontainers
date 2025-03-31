@@ -12,6 +12,8 @@ def main():
     print("torch.backends.cudnn.is_available():", torch.backends.cudnn.is_available())
     print("torch.backends.cuda.is_built():", torch.backends.cuda.is_built())
     print("torch.backends.mkldnn.is_available():", torch.backends.mkldnn.is_available())
+    print("torch.version.cuda:", torch.version.cuda)
+    print("torch.backends.cudnn.version():", torch.backends.cudnn.version())
 
 
 if __name__ == "__main__":
