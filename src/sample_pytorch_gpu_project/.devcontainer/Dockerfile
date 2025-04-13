@@ -1,26 +1,21 @@
-# leverage multi-stage build and copy python binaries to cuda-dl-base container
-FROM python:3.11.11 as python
-FROM nvcr.io/nvidia/cuda-dl-base:24.12-cuda12.6-devel-ubuntu24.04
-COPY --from=python /usr/local/ /usr/local/
+FROM python:3.11.11
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-
-RUN apt-get update \
-    && apt-get install -y \
-    wget \
-    git \
-    sudo \
-    && rm -rf /var/lib/apt/lists/*
-
 # install Azure CLI
 RUN wget -qO- https://aka.ms/InstallAzureCLIDeb | bash
-
-# uid=1000 is already used as non-root user `ubuntu` so no need to create a new user
-ARG USERNAME=ubuntu
-# this is required for uv sync not to get permissions errors
-RUN chown -R $USERNAME:$USERNAME /usr/local
-# delete password of the user
-RUN passwd -d $USERNAME
+# create non-root user and set the default user
+ARG USERNAME=devuser
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    # Add sudo support
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
+    && rm -rf /var/lib/apt/lists/*
 USER $USERNAME
+
 
 # make all python tools installed by uv accessible
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
