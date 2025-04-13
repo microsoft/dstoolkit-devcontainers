@@ -27,8 +27,7 @@ steps:
       python -m venv venv
       source venv/bin/activate
       python -m pip install --upgrade pip
-      pip install -r requirements-dev.txt
-      pip install pytest-azurepipelines
+      pip install ruff pytest-azurepipelines
     displayName: "Install requirements"
 
   # files under venv will be automatically excluded from ruff check by default https://docs.astral.sh/ruff/settings/#exclude
