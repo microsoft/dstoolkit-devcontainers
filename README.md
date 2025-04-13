@@ -68,9 +68,8 @@ This section provides a comprehensive guide on how to set up a development envir
 1. Update other parts of `Dockerfile` if you need
 1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
 1. If you need to update python packages, stay inside DevContainer you just built and follow the steps below
-   1. Delete `.devcontainer/uv.lock`
    1. Update `.devcontainer/pyproject.toml` and add/remove new python packages you need in `project.dependencies` section
-   1. Run `uv sync --project $UV_PROJECT_FILE` to make sure the new packages can be installed in the container successfully. This will also create a new `.devcontainer/uv.lock` file with the updated python packages. `$UV_PROJECT_FILE` is already set automatically during docker build so you don't need to manually set it
+   1. Run `uv lock --project $UV_PROJECT_FILE` to update the project's lockfile `.devcontainer/uv.lock` with the updated python packages. `$UV_PROJECT_FILE` is already set automatically during docker build so you don't need to manually set it
 1. Rerun `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
 
 ## How to update python packages in the dev container
