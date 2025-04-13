@@ -13,6 +13,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     && rm -rf /var/lib/apt/lists/*
+# some packages try to create new directories in /usr/local/lib/python3.11/site-packages etc during uv sync so permission needs to be granted
+RUN chown -R $USERNAME:$USERNAME /usr/local
 USER $USERNAME
 
 # make all python tools installed by uv accessible
