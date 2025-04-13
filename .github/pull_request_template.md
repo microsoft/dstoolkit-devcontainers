@@ -12,7 +12,7 @@
 
 * [ ] No PII in logs or output
 * [ ] Made corresponding changes to the documentation
-* [ ] All new packages used are included in requirements.txt
+* [ ] All new packages used are included in pyproject.toml
 * [ ] Functions use type hints, and there are no type hint errors
 
 ## Pull Request Type

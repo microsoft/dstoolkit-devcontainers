@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/microsoft/dstoolkit-devcontainers/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/microsoft/dstoolkit-devcontainers/actions/workflows/ci.yaml)
 
-A machine learning and data science project template that makes it easy to work with multiple Docker based [VSCode Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) in the same repository. The template also makes it easy to transition projects to the cloud and production by including automated code quality checks, pytest configuration, CI pipeline templates and a sample for running on Azure Machine Learning.
+A machine learning and data science project template that makes it easy to work with multiple Docker based [VSCode Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) in the same repository. The template leverages [uv](https://github.com/astral-sh/uv), an extremely fast Python package and project manager as a base for better productivity. The template also makes it easy to transition projects to the cloud and production by including automated code quality checks, pytest configuration, CI pipeline templates and a sample for running on Azure Machine Learning.
 
 ## Contents
 
@@ -74,7 +74,7 @@ This section provides a comprehensive guide on how to set up a development envir
 
 ## How to update python packages in the dev container
 
-This solution uses [uv](https://docs.astral.sh/uv) to manage python packages in the dev container. `uv` is installed in the dev container and it is used to manage python packages in the dev container. `uv` is also used to create a lock file (`uv.lock`) that contains the list of all python packages and their versions that are installed in the dev container. This lock file is used to ensure that the same versions of the packages are installed in all dev containers.
+This solution uses [uv](https://docs.astral.sh/uv) to manage python packages in the dev container. `uv` is a fast and efficient Python package and project manager that simplifies dependency management and ensures consistency across environments. It is installed in the dev container and is used to manage python packages in the dev container. `uv` is also used to create a lock file (`uv.lock`) that contains the list of all python packages and their versions that are installed in the dev container. This lock file is used to ensure that the same versions of the packages and dependencies are installed in every devcontainer build.
 
 To manage Python packages within your active dev container, execute the following commands according to your needs:
 
