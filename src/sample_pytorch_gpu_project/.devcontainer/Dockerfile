@@ -1,4 +1,4 @@
-FROM python:3.11.11
+FROM python:3.11.12
 # install Azure CLI
 RUN wget -qO- https://aka.ms/InstallAzureCLIDeb | bash
 # create non-root user and set the default user
