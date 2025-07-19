@@ -31,8 +31,8 @@ ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 ENV UV_LINK_MODE=copy
 # Install dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=src/sample_gpu_project/.devcontainer/uv.lock,target=uv.lock \
-    --mount=type=bind,source=src/sample_gpu_project/.devcontainer/pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=src/sample_pytorch_gpu_project/.devcontainer/uv.lock,target=uv.lock \
+    --mount=type=bind,source=src/sample_pytorch_gpu_project/.devcontainer/pyproject.toml,target=pyproject.toml \
     uv sync --locked --project $UV_PROJECT_FILE
 
 # install common module related packages
