@@ -26,6 +26,10 @@ ENV UV_PROJECT_ENVIRONMENT=/usr/local
 ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 RUN sudo chown -R $USERNAME:$USERNAME /usr/local
 
-# install notebooks related dependencies & python dev tools
-COPY notebooks/.devcontainer/pyproject.toml notebooks/.devcontainer/uv.lock ./
-RUN uv sync --no-cache --project $UV_PROJECT_FILE --frozen
+# Changing the default UV_LINK_MODE silences warnings about not being able to use hard links since the cache and sync target are on separate file systems
+ENV UV_LINK_MODE=copy
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=notebooks/.devcontainer/uv.lock,target=uv.lock \
+    --mount=type=bind,source=notebooks/.devcontainer/pyproject.toml,target=pyproject.toml \
+    uv sync --locked --project $UV_PROJECT_FILE

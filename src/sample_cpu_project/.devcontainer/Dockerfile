@@ -26,9 +26,13 @@ ENV UV_PROJECT_ENVIRONMENT=/usr/local
 ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 RUN sudo chown -R $USERNAME:$USERNAME /usr/local
 
-# install project dependencies & python dev tools
-COPY src/sample_cpu_project/.devcontainer/pyproject.toml src/sample_cpu_project/.devcontainer/uv.lock ./
-RUN uv sync --no-cache --project $UV_PROJECT_FILE --frozen
+# Changing the default UV_LINK_MODE silences warnings about not being able to use hard links since the cache and sync target are on separate file systems
+ENV UV_LINK_MODE=copy
+# Install dependencies
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/uv.lock,target=uv.lock \
+    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/pyproject.toml,target=pyproject.toml \
+    uv sync --locked --project $UV_PROJECT_FILE
 
 # install common module related packages
 # This part can be potentially improved by https://docs.astral.sh/uv/concepts/projects/workspaces/#when-not-to-use-workspaces to move away from requirements.txt and gets its own lock file
