@@ -1,4 +1,4 @@
 # notebooks specific requirements
-ipykernel==6.29.5
+ipykernel==6.30.0
 nbconvert==7.16.6
 nbformat==5.10.4
