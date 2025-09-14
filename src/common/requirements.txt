@@ -1,2 +1,2 @@
 # libraries for common modules
-ipykernel==6.30.0
+ipykernel==6.30.1
