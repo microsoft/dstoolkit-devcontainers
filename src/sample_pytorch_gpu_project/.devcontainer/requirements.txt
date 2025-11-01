@@ -1,5 +1,5 @@
-torch==2.8.0
-torchvision==0.23.0
+torch==2.9.0
+torchvision==0.24.0
 # the below are used by AML, can be deleted if not using AML
-mlflow==3.1.4
+mlflow==3.5.1
 azureml-mlflow==1.60.0
