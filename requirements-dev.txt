@@ -1,5 +1,5 @@
-mypy==1.18.2
+mypy==1.19.0
 pytest==9.0.1
-pre-commit==4.3.0
+pre-commit==4.5.0
 pytest-cov==7.0.0
-ruff==0.14.3
+ruff==0.14.8
