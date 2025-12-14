@@ -15,18 +15,17 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 USER $USERNAME
 
-# Make pip-installed tools accessible and configure pip cache location
+# Make pip-installed tools accessible
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
-ENV PIP_CACHE_DIR=/pip-cache
 
 # Install development tools (linters, formatters, test runners, etc.)
 RUN --mount=type=cache,target=/pip-cache \
-    pip install pip --upgrade
+    pip install --cache-dir=/pip-cache pip --upgrade
 COPY requirements-dev.txt .
 RUN --mount=type=cache,target=/pip-cache \
-    pip install -r requirements-dev.txt
+    pip install --cache-dir=/pip-cache -r requirements-dev.txt
 
 # Install notebooks related dependencies
 COPY notebooks/.devcontainer/requirements.txt .
 RUN --mount=type=cache,target=/pip-cache \
-    pip install -r requirements.txt
+    pip install --cache-dir=/pip-cache -r requirements.txt
