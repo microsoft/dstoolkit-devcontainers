@@ -1,5 +1,5 @@
 FROM python:3.11.14
-# Create non-root user and set the default user
+# create non-root user and set the default user
 ARG USERNAME=devuser
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
