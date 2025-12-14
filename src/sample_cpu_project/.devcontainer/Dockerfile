@@ -16,7 +16,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 USER $USERNAME
 
 # Make pip-installed tools accessible
-ENV PATH=$PATH:/home/devuser/.local/bin
+ENV PATH=$PATH:/home/$USERNAME/.local/bin
 
 # Install Python packages (using BuildKit cache mounts for faster rebuilds)
 RUN --mount=type=cache,target=/pip-cache \
