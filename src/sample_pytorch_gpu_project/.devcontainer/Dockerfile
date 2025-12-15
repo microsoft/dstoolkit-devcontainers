@@ -38,4 +38,4 @@ COPY requirements-dev.txt .
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --cache-dir=/root/.cache/pip -r requirements-dev.txt
 
-RUN az extension add --name ml
+RUN az extension add --name ml --yes
