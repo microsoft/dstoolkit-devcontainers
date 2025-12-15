@@ -21,21 +21,21 @@ USER $USERNAME
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
 
 # Install Python packages (using BuildKit cache mounts for faster rebuilds)
-RUN --mount=type=cache,target=/pip-cache \
-    pip install --cache-dir=/pip-cache pip --upgrade
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --cache-dir=/root/.cache/pip pip --upgrade
 
 COPY src/sample_pytorch_gpu_project/.devcontainer/requirements.txt .
-RUN --mount=type=cache,target=/pip-cache \
-    pip install --cache-dir=/pip-cache -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --cache-dir=/root/.cache/pip -r requirements.txt
 
 # Install common module related packages
 COPY src/common/requirements.txt common-requirements.txt
-RUN --mount=type=cache,target=/pip-cache \
-    pip install --cache-dir=/pip-cache -r common-requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --cache-dir=/root/.cache/pip -r common-requirements.txt
 
 # Install development tools (linters, formatters, test runners, etc.)
 COPY requirements-dev.txt .
-RUN --mount=type=cache,target=/pip-cache \
-    pip install --cache-dir=/pip-cache -r requirements-dev.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --cache-dir=/root/.cache/pip -r requirements-dev.txt
 
 RUN az extension add --name ml

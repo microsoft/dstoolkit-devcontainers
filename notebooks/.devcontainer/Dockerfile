@@ -19,13 +19,13 @@ USER $USERNAME
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
 
 # Install development tools (linters, formatters, test runners, etc.)
-RUN --mount=type=cache,target=/pip-cache \
-    pip install --cache-dir=/pip-cache pip --upgrade
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --cache-dir=/root/.cache/pip pip --upgrade
 COPY requirements-dev.txt .
-RUN --mount=type=cache,target=/pip-cache \
-    pip install --cache-dir=/pip-cache -r requirements-dev.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --cache-dir=/root/.cache/pip -r requirements-dev.txt
 
 # Install notebooks related dependencies
 COPY notebooks/.devcontainer/requirements.txt .
-RUN --mount=type=cache,target=/pip-cache \
-    pip install --cache-dir=/pip-cache -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --cache-dir=/root/.cache/pip -r requirements.txt
