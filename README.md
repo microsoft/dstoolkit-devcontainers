@@ -131,11 +131,37 @@ An Azure Machine Learning (AML) example is provided under `src/sample_pytorch_gp
 
 This repository contains templates for running a Continuous Integration (CI) pipeline on either Azure DevOps (under `.azuredevops` directory) or on Github Actions (under `.github` directory). Each of the CI pipeline configurations provided have the following features at a high level:
 
+- **DevContainer Build Testing**: Validate that all devcontainer configurations build successfully and have functional Python environments
 - Run code quality checks (`ruff check`) over the repository
 - Find all subdirectories under `src` and run all pytest tests inside the associated Docker containers
 - Publish test results and code coverage statistics
 
 We recommend setting up pipeline triggers for PR creation, editing and merging. This will ensure the pipeline runs continuously and will help catch any issues earlier in your development process.
+
+#### DevContainer Build Testing
+
+The GitHub Actions CI pipeline includes automated testing of all devcontainer configurations to catch broken environments before merge. This feature:
+
+- **Validates all devcontainer builds**: Tests `notebooks/`, `src/sample_cpu_project/`, and `src/sample_pytorch_gpu_project/` devcontainers
+- **Tests full devcontainer integration**: Validates not just Docker builds, but also devcontainer.json features, post-create commands, and VS Code configurations
+- **Runs smoke tests**: Verifies that Python, pytest, and ruff are available and functional in each built container
+- **Parallel execution**: All devcontainer builds run in parallel for fast feedback (<10 minutes)
+- **Individual status reporting**: Each devcontainer shows pass/fail status independently in the GitHub Actions UI
+
+**How it works**: The CI pipeline automatically creates a `.env` file from `.env.example` before building devcontainers. This ensures that environment variables referenced in devcontainer.json `runArgs` (like `--env-file`) are available during builds.
+
+**Common failure scenarios the CI catches**:
+- Invalid JSON syntax in devcontainer.json
+- Missing or incorrectly referenced Dockerfiles
+- Broken package dependencies in requirements.txt or requirements-dev.txt
+- Failed post-create commands (e.g., pre-commit installation issues)
+- Missing Python tools (python, pytest, ruff)
+
+**Troubleshooting**: If a devcontainer build fails in CI:
+1. Check the GitHub Actions logs for the specific failing devcontainer (matrix job name shows the path)
+2. Review the error message - it will indicate if it's a JSON error, missing file, or build failure
+3. Test the devcontainer build locally: `cp .env.example .env` then open the folder in VS Code Dev Containers
+4. Common fixes: Fix JSON syntax, verify Dockerfile path, check package versions in requirements files
 
 See the sections below for links on how to setup pipelines with [Azure DevOps](#how-to-configure-azure-devops-ci-pipeline) and [Github Actions](#how-to-configure-github-actions-ci-pipeline). Note that if you are only using one of these platforms to host a pipeline (or neither), you can safely delete either (or both) the `.azuredevops` directory or the `.github` directory.
 
