@@ -169,3 +169,7 @@ cython_debug/
 .specify/
 specs/
 *.speckit
+
+# .github agents and prompts
+.github/agents/
+.github/prompts/
