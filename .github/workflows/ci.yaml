@@ -14,6 +14,32 @@ permissions:
   actions: read
   checks: write
 jobs:
+  # Test that all devcontainer configurations build successfully
+  test-devcontainers:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        subfolder:
+          - notebooks
+          - src/sample_cpu_project
+          - src/sample_pytorch_gpu_project
+      fail-fast: false  # Test all devcontainers even if one fails
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      
+      - name: Setup .env file for devcontainer builds
+        run: cp .env.example .env
+      
+      - name: Build and test devcontainer (${{ matrix.subfolder }})
+        uses: devcontainers/ci@v0.3
+        with:
+          subFolder: ${{ matrix.subfolder }}
+          # Run smoke tests to verify Python environment is functional
+          runCmd: python --version && pytest --version && ruff --version
+          push: never
+
   build:
     runs-on: ubuntu-latest
 
