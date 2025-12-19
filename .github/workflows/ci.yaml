@@ -13,16 +13,132 @@ permissions:
   contents: read
   actions: read
   checks: write
+
 jobs:
-  build:
+  # Build devcontainers and run full pytest suite
+  test-devcontainers:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - subfolder: src/sample_cpu_project
+            name: cpu-project
+          - subfolder: src/sample_pytorch_gpu_project
+            name: gpu-project
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .env file
+        run: cp .env.example .env
+
+      - name: Build devcontainer and run pytest (${{ matrix.name }})
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: ${{ matrix.subfolder }}/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            cd /workspaces/repo/${{ matrix.subfolder }}
+            # Use /tmp for coverage data and output files to avoid permission issues
+            COVERAGE_FILE=/tmp/.coverage pytest tests/ \
+              --junitxml=/tmp/test-results.xml \
+              -o junit_suite_name=${{ matrix.name }} \
+              --doctest-modules \
+              --cov=. \
+              --cov-config=/workspaces/repo/pyproject.toml \
+              --cov-report=xml:/tmp/coverage.xml
+            sed -i 's|<package name=\".\"|<package name=\"${{ matrix.name }}\"|g' /tmp/coverage.xml
+            # Copy to workspace with sudo
+            sudo cp /tmp/test-results.xml ./test-results.xml
+            sudo cp /tmp/coverage.xml ./coverage.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.name }}
+          path: ${{ matrix.subfolder }}/test-results.xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-${{ matrix.name }}
+          path: ${{ matrix.subfolder }}/coverage.xml
+
+  # Smoke test for notebooks devcontainer
+  test-notebooks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .env file
+        run: cp .env.example .env
+
+      - name: Build and smoke test notebooks devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: notebooks/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            cd /workspaces/repo
+            python --version
+            pytest --version
+            ruff --version
+  # Publish combined test results and coverage
+  publish-test-results:
+    needs: test-devcontainers
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all test result artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-results-*
+          path: test-results
+
+      - name: Download all coverage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          path: coverage
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v2
+        if: always()
+        with:
+          name: pytest
+          path: 'test-results/**/*.xml'
+          reporter: java-junit
+
+      - name: Publish Code Coverage Summary Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          badge: true
+          output: both
+          format: markdown
+          filename: 'coverage/**/*.xml'
+
+      - name: Add code coverage summary to job summary
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
+  # Run linter on codebase
+  lint:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Python 3.11
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
@@ -34,40 +150,6 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Run ruff linter
-        # files under venv will be automatically excluded from ruff check by default https://docs.astral.sh/ruff/settings/#exclude
         run: |
           source venv/bin/activate
           ruff check --output-format github
-
-      - name: Run pytest in docker containers
-        run: ./ci-tests.sh
-        env:
-          BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}
-
-      - name: Publish Test Results
-        uses: dorny/test-reporter@v2
-        if: always()
-        with:
-          name: pytest
-          path: |
-            **/test-results-*.xml
-          reporter: java-junit
-
-      - name: Publish Code Coverage Summary Report
-        uses: irongut/CodeCoverageSummary@v1.3.0
-        with:
-          badge: true
-          output: both
-          format: markdown
-          filename: coverage.xml
-
-      - name: Add code coverage summary markdown to github step summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-
-      - name: Archive test and code coverage results
-        uses: actions/upload-artifact@v5
-        with:
-          name: test-and-coverage-results
-          path: |
-            **/test-reuslts-*.xml
-            coverage.xml
