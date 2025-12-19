@@ -7,27 +7,27 @@ trigger:
   - main
 
 stages:
-  # - stage: Lint
-  #   displayName: 'Lint'
-  #   jobs:
-  #     - job: RunLinter
-  #       displayName: 'Run ruff linter'
-  #       pool:
-  #         name: Default
-  #       workspace:
-  #         clean: all
-  #       steps:
-  #         - script: |
-  #             python3 -m venv venv
-  #             source venv/bin/activate
-  #             pip install --upgrade pip
-  #             pip install -r requirements-dev.txt
-  #           displayName: 'Install requirements'
-  #
-  #         - bash: |
-  #             source venv/bin/activate
-  #             ruff check --output-format azure
-  #           displayName: 'Run ruff linter'
+  - stage: Lint
+    displayName: 'Lint'
+    jobs:
+      - job: RunLinter
+        displayName: 'Run ruff linter'
+        pool:
+          name: Default
+        workspace:
+          clean: all
+        steps:
+          - script: |
+              python3 -m venv venv
+              source venv/bin/activate
+              pip install --upgrade pip
+              pip install -r requirements-dev.txt
+            displayName: 'Install requirements'
+
+          - bash: |
+              source venv/bin/activate
+              ruff check --output-format azure
+            displayName: 'Run ruff linter'
 
   - stage: Test
     displayName: 'Test Devcontainers'
