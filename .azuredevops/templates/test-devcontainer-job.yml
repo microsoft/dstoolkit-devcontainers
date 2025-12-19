@@ -1,0 +1,43 @@
+parameters:
+  - name: projects
+    type: object
+  - name: pool
+    type: object
+
+jobs:
+  - ${{ each project in parameters.projects }}:
+    - job: Test_${{ replace(project.name, '-', '_') }}
+      displayName: 'Test ${{ project.name }}'
+      pool: ${{ parameters.pool }}
+      workspace:
+        clean: all
+      steps:
+        - template: setup-devcontainer.yml
+
+        - ${{ if eq(project.smokeTestOnly, true) }}:
+          - template: run-devcontainer.yml
+            parameters:
+              configPath: '${{ project.configPath }}'
+              command: 'cd /workspaces/repo && python --version && pytest --version && ruff --version'
+
+        - ${{ if ne(project.smokeTestOnly, true) }}:
+          - template: run-devcontainer.yml
+            parameters:
+              configPath: '${{ project.configPath }}'
+              command: >-
+                cd /workspaces/repo/${{ project.projectPath }} &&
+                COVERAGE_FILE=/tmp/.coverage pytest tests/
+                --junitxml=/tmp/test-results.xml
+                -o junit_suite_name=${{ project.name }}
+                --doctest-modules
+                --cov=.
+                --cov-config=/workspaces/repo/pyproject.toml
+                --cov-report=xml:/tmp/coverage.xml &&
+                sed -i "s|<package name=\".\"|<package name=\"${{ project.name }}\"|g" /tmp/coverage.xml &&
+                sudo cp /tmp/test-results.xml ./test-results.xml &&
+                sudo cp /tmp/coverage.xml ./coverage.xml
+
+          - template: publish-test-results.yml
+            parameters:
+              projectPath: '${{ project.projectPath }}'
+              projectName: '${{ project.name }}'

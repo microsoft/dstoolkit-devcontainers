@@ -1,27 +1,35 @@
 {
     "name": "Sample PyTorch GPU Project Dev Container",
     "build": {
-        // use root directory as build context so that requirements-dev.txt is accessible during build
         "context": "../../../",
         "dockerfile": "Dockerfile"
     },
     "shutdownAction": "none",
+    "updateRemoteUserUID": false,
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
             "installZsh": true,
             "configureZshAsDefaultShell": true,
             "installOhMyZsh": true,
             "upgradePackages": false,
-            "username": "devuser",
-        },
+            "username": "devuser"
+        }
+    },
+    "initializeCommand": "test -f ${localWorkspaceFolder}/.env || touch ${localWorkspaceFolder}/.env",
+    "containerEnv": {
+        "PYTHONPATH": "/workspaces/repo"
     },
     "runArgs": [
-        "--gpus",
-        "all",
         "--env-file",
-        "../../.env"
+        "${localWorkspaceFolder}/.env"
     ],
-    "postCreateCommand": "pre-commit install --overwrite",
+    "hostRequirements": {
+        "gpu": "optional"
+    },
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/repo,type=bind",
+    "workspaceFolder": "/workspaces/repo",
+    "remoteUser": "devuser",
+    "postCreateCommand": "cd /workspaces/repo && pre-commit install --overwrite || echo 'pre-commit installation failed; continuing without pre-commit hooks'",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -68,7 +76,7 @@
                     "notebook.source.fixAll": "explicit",
                     "notebook.source.organizeImports": "explicit"
                 }
-            },
+            }
         }
-    },
+    }
 }

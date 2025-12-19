@@ -1,0 +1,43 @@
+# GitHub Action to sync repository to Azure DevOps
+# Automatically pushes commits from GitHub to Azure DevOps Repos
+# This keeps Azure DevOps in sync when GitHub is the primary development location
+
+name: Sync to Azure DevOps
+
+on:
+  push:
+    branches:
+      - main
+      - feature/devcontainer-pytest-integration  # Temporary for testing
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history for complete mirror
+      
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+      
+      - name: Push to Azure DevOps
+        env:
+          AZDO_PAT: ${{ secrets.AZDO_PAT }}
+          AZDO_ORG: ${{ secrets.AZDO_ORG }}
+          AZDO_PROJECT: ${{ secrets.AZDO_PROJECT }}
+          AZDO_REPO: ${{ secrets.AZDO_REPO }}
+        run: |
+          # Add Azure DevOps as remote
+          git remote add azdo https://${AZDO_PAT}@dev.azure.com/${AZDO_ORG}/${AZDO_PROJECT}/_git/${AZDO_REPO}
+          
+          # Push all branches and tags to Azure DevOps
+          git push azdo --all --force
+          git push azdo --tags --force
+          
+          echo "Successfully synced to Azure DevOps"
