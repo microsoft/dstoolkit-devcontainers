@@ -15,14 +15,15 @@
 trigger:
   - main
 
+pool:
+  vmImage: 'ubuntu-latest'
+
 stages:
   - stage: Lint
     displayName: 'Lint'
     jobs:
       - job: RunLinter
         displayName: 'Run ruff linter'
-        pool:
-          vmImage: 'ubuntu-latest'
         steps:
           - task: UsePythonVersion@0
             displayName: 'Use Python 3.11'
@@ -57,8 +58,6 @@ stages:
               configPath: 'notebooks/.devcontainer/devcontainer.json'
               projectPath: 'notebooks'
               smokeTestOnly: true
-          pool:
-            vmImage: 'ubuntu-latest'
 
       - job: PublishCoverage
         displayName: 'Publish Coverage'
@@ -71,8 +70,6 @@ stages:
         # If you change a project name, update the corresponding entry here to match this convention.
         dependsOn: [Test_cpu_project, Test_gpu_project, Test_notebooks]
         condition: succeededOrFailed()
-        pool:
-          vmImage: 'ubuntu-latest'
         steps:
           - template: templates/merge-coverage.yml
             parameters:

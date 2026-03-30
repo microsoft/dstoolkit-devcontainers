@@ -1,5 +1,11 @@
 # Azure DevOps CI Pipeline (Self-Hosted Agent)
 #
+# As the Microsoft-hosted agent option has a limit of 10GB of storage for disk outputs from a pipeline,
+# this causes an issue when the Docker images for modules under src require more than 10GB of storage.
+# The self-hosted agent option allows the storage to be increased based on the VM size.
+# For setting up a CI pipeline with a self-hosted Linux agent see:
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops
+#
 # This pipeline runs on self-hosted agents and supports both Linux and macOS (Apple Silicon).
 # Templates are located in .azuredevops/templates/
 
