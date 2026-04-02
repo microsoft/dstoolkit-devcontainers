@@ -15,7 +15,6 @@ A machine learning and data science project template that makes it easy to work 
     - [`notebooks` directory vs `src` directory](#notebooks-directory-vs-src-directory)
   - [AML Example](#aml-example)
   - [CI Pipeline](#ci-pipeline)
-    - [Running all unit tests with `ci-tests.sh`](#running-all-unit-tests-with-ci-testssh)
     - [How to Configure Azure DevOps CI Pipeline](#how-to-configure-azure-devops-ci-pipeline)
       - [Choosing between Azure DevOps Microsoft-hosted vs Self-hosted CI Pipeline](#choosing-between-azure-devops-microsoft-hosted-vs-self-hosted-ci-pipeline)
     - [How to Configure Github Actions CI Pipeline](#how-to-configure-github-actions-ci-pipeline)
@@ -73,12 +72,11 @@ This section gives you overview of the directory structure of this template. Onl
 
 ```bash
 .
-├── .azuredevops                   # CI pipelines for Azure DevOps. Details at section: How to Configure Azure DevOps CI Pipeline 
-├── .github                        # CI pipelines for Github Actions. Details at section: How to Configure Github Actions CI Pipeline 
+├── .azuredevops                   # CI pipelines for Azure DevOps. Details at section: How to Configure Azure DevOps CI Pipeline
+├── .github                        # CI pipelines for Github Actions. Details at section: How to Configure Github Actions CI Pipeline
 ├── .pre-commit-config.yaml        # pre-commit config file with formatting and linting. Setup is covered in Section: Getting Started
 ├── .env.example                   # Example of .env file. Setup is covered in Section: Getting Started
-├── ci-tests.sh                    # Details at Section: Running all unit tests with ci-tests.sh
-├── data                           # Directory to keep your data for local training etc. This directory is gitignored 
+├── data                           # Directory to keep your data for local training etc. This directory is gitignored
 ├── notebooks                      # Setup process is covered in Section: How to setup dev environment?
 │   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
 │   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
@@ -94,7 +92,7 @@ This section gives you overview of the directory structure of this template. Onl
     │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
     │   │   ├── Dockerfile         # referred in devcontainer.json. Supports only CPU
     │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
-    │   ├── sample_main.py         
+    │   ├── sample_main.py
     │   └── tests                  # pytest scripts for sample_cpu_project goes here
     │       └── test_dummy.py      # pytest script example
     └── sample_pytorch_gpu_project # gpu project example with pytorch. Setup process is covered in Section: How to setup dev environment?
@@ -104,7 +102,7 @@ This section gives you overview of the directory structure of this template. Onl
         │   ├── Dockerfile         # referred in devcontainer.json. Supports GPU
         │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
         ├── aml_example/           # Sample AML CLI v2 Components-based pipeline, including setup YAML. See sample_pytorch_gpu_project/README for full details of files in this directory.
-        ├── sample_main.py        
+        ├── sample_main.py
         ├── inference.py           # Example pytorch inference/eval script that also works with aml_example
         ├── train.py               # Example pytorch model training script that also works with aml_example
         └── tests                  # pytest scripts for sample_pytorch_gpu_project goes here
@@ -132,23 +130,12 @@ An Azure Machine Learning (AML) example is provided under `src/sample_pytorch_gp
 This repository contains templates for running a Continuous Integration (CI) pipeline on either Azure DevOps (under `.azuredevops` directory) or on Github Actions (under `.github` directory). Each of the CI pipeline configurations provided have the following features at a high level:
 
 - Run code quality checks (`ruff check`) over the repository
-- Find all subdirectories under `src` and run all pytest tests inside the associated Docker containers
+- Build devcontainers and run pytest tests inside them using the devcontainer CLI (both GitHub Actions and Azure DevOps)
 - Publish test results and code coverage statistics
 
 We recommend setting up pipeline triggers for PR creation, editing and merging. This will ensure the pipeline runs continuously and will help catch any issues earlier in your development process.
 
 See the sections below for links on how to setup pipelines with [Azure DevOps](#how-to-configure-azure-devops-ci-pipeline) and [Github Actions](#how-to-configure-github-actions-ci-pipeline). Note that if you are only using one of these platforms to host a pipeline (or neither), you can safely delete either (or both) the `.azuredevops` directory or the `.github` directory.
-
-### Running all unit tests with `ci-tests.sh`
-
-As multiple independent directories can be added under `src`, each with its own Dockerfile and requirements, running unit tests for each directory under `src` needs to be done within the Docker container of each `src` subdirectory. The `ci-tests.sh` script automates this task of running all unit tests for the repository with the following steps:
-
-1. Finds all subdirectories under `src` that have at least one `test_*.py` under a `tests` folder
-2. Builds each Docker image for each subdirectory with tests, using the Dockerfile in the associated `.devcontainer` directory
-3. Runs pytest for each subdirectory with tests, inside the matching Docker container built in step 2
-4. Combine all test results and coverage reports from step 3, with reports in a valid format for publishing in either Azure DevOps or Github Actions hosted pipeline
-
-Note that the `ci-test.sh` script can be run locally as well and it is assumed that all tests are written with pytest.
 
 ### How to Configure Azure DevOps CI Pipeline
 
@@ -158,7 +145,7 @@ See [create your first pipeline](https://learn.microsoft.com/en-us/azure/devops/
 
 There are two templates for running a CI pipeline in Azure DevOps, a pipeline configuration that uses a Microsoft hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-ms-hosted.yml`) and a pipeline configuration that uses a self-hosted agent to run the pipeline (`.azuredevops/ado-ci-pipeline-self-hosted.yml`).
 
-The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under `src` that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see [resource limitations of Microsoft hosted agents](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations)). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at `.azuredevops/ado-ci-pipeline-self-hosted.yml` includes additional steps to help manage space consumed by CI pipeline runs. The two versions are otherwise identitical in terms of building each docker container under `src`, running pytest within each of these containers and publishing test results and coverage information.
+The Microsoft hosted version is easiest to start with and recommended. Where you may consider switching to the self-hosted version, is when you have added several directories under `src` that have individual containers and the size of all the docker builds in the CI pipeline comes up against the 10GB disk storage limit for Microsoft hosted pipelines (see [resource limitations of Microsoft hosted agents](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml#capabilities-and-limitations)). In this case (or when other resource constraints are met) switching to a self-hosted agent pipeline may be an option and the template at `.azuredevops/ado-ci-pipeline-self-hosted.yml` includes additional steps to help manage space consumed by CI pipeline runs. The self-hosted template supports both Linux and macOS (including Apple Silicon) agents. The two versions are otherwise identical in terms of building each docker container under `src`, running pytest within each of these containers and publishing test results and coverage information.
 
 ### How to Configure Github Actions CI Pipeline
 
@@ -209,7 +196,7 @@ ssh-add
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
 
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 

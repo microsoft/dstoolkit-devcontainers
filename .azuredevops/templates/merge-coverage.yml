@@ -1,0 +1,55 @@
+parameters:
+  - name: coverageArtifacts
+    type: object
+    default: []
+
+steps:
+  - checkout: none
+
+  - ${{ each artifact in parameters.coverageArtifacts }}:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: '${{ artifact }}'
+        path: '$(Pipeline.Workspace)/coverage/${{ artifact }}'
+      continueOnError: true
+
+  - bash: |
+      set -ex
+      
+      # Install .NET SDK
+      ARCH_FLAG=""
+      [[ "$(uname -m)" == "arm64" ]] && ARCH_FLAG="--architecture arm64"
+      curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --install-dir $HOME/.dotnet $ARCH_FLAG
+      
+      # Make .NET available for subsequent tasks
+      echo "##vso[task.prependpath]$HOME/.dotnet"
+      echo "##vso[task.prependpath]$HOME/.dotnet/tools"
+    displayName: 'Install .NET SDK'
+
+  - bash: |
+      set -ex
+      
+      export DOTNET_ROOT=$HOME/.dotnet
+      export PATH="$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH"
+      
+      # Install ReportGenerator
+      dotnet tool install -g dotnet-reportgenerator-globaltool 2>/dev/null || dotnet tool update -g dotnet-reportgenerator-globaltool
+      
+      # Find and merge coverage files
+      COVERAGE_FILES=$(find $(Pipeline.Workspace)/coverage -name "coverage.xml" 2>/dev/null | paste -sd ";" -)
+      if [ -z "$COVERAGE_FILES" ]; then
+        echo "##vso[task.logissue type=error]No coverage files found"
+        exit 1
+      fi
+      
+      echo "Merging coverage files: $COVERAGE_FILES"
+      mkdir -p $(Pipeline.Workspace)/coverage/merged
+      reportgenerator \
+        "-reports:$COVERAGE_FILES" \
+        "-targetdir:$(Pipeline.Workspace)/coverage/merged" \
+        "-reporttypes:Cobertura;HtmlInline_AzurePipelines"
+    displayName: 'Merge coverage reports'
+
+  - task: PublishCodeCoverageResults@2
+    inputs:
+      summaryFileLocation: '$(Pipeline.Workspace)/coverage/merged/Cobertura.xml'

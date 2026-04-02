@@ -1,0 +1,25 @@
+# Template: Publish Test Results
+# Publishes test results and coverage artifacts from a project
+#
+# Parameters:
+#   projectPath: Path to project directory containing test-results.xml and coverage.xml
+#   projectName: Name for the test run and coverage artifact
+
+parameters:
+  - name: projectPath
+    type: string
+  - name: projectName
+    type: string
+
+steps:
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '${{ parameters.projectPath }}/test-results.xml'
+      testRunTitle: '${{ parameters.projectName }}'
+    condition: succeededOrFailed()
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(System.DefaultWorkingDirectory)/${{ parameters.projectPath }}/coverage.xml'
+      artifact: 'coverage-${{ parameters.projectName }}'
+    condition: succeededOrFailed()

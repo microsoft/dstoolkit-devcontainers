@@ -1,0 +1,6 @@
+steps:
+  - script: cp .env.example .env
+    displayName: 'Setup .env file'
+
+  - script: npm install -g @devcontainers/cli
+    displayName: 'Install devcontainer CLI'

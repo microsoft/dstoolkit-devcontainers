@@ -1,7 +1,6 @@
 {
     "name": "DSToolkit Notebooks Dev Container",
     "build": {
-        // use root directory as build context so that requirements-dev.txt is accessible during build
         "context": "../../",
         "dockerfile": "Dockerfile"
     },
@@ -15,9 +14,10 @@
             "username": "devuser",
         },
     },
+    "initializeCommand": "test -f ${localWorkspaceFolder}/.env || cp ${localWorkspaceFolder}/.env.example ${localWorkspaceFolder}/.env",
     "runArgs": [
         "--env-file",
-        "../.env"
+        "${localWorkspaceFolder}/.env"
     ],
     "postCreateCommand": "pre-commit install --overwrite",
     "customizations": {

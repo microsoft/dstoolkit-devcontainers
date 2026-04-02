@@ -11,7 +11,6 @@ extend-exclude = ["notebooks"]
 # - pep8-naming (N)
 select = ["E", "F", "B", "S", "I", "N"]
 
-
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**/test_*.py" = [
     "S101", # asserts allowed in tests
@@ -24,9 +23,18 @@ select = ["E", "F", "B", "S", "I", "N"]
 pythonpath = "src"
 
 [tool.coverage.run]
+source = ["src"]
+relative_files = true
 omit = [
     # ignore all notebooks in src
     "*/notebooks/*",
     # ignore all tests in src
     "*/tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
 ]

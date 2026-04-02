@@ -1,0 +1,50 @@
+# Template: Run Devcontainer
+# Builds and executes commands inside a devcontainer
+#
+# Parameters:
+#   configPath: Path to devcontainer.json relative to repo root
+#   command: Shell command to execute inside the container
+#
+# Handles platform-specific Docker configuration:
+# - macOS: Uses DOCKER_HOST to avoid Docker Desktop path translation issues
+# - Linux: Uses standard docker socket
+
+parameters:
+  - name: configPath
+    type: string
+  - name: command
+    type: string
+
+steps:
+  - bash: |
+      set -ex
+      
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        # Use unix socket directly to bypass Docker Desktop context issues on macOS
+        export DOCKER_HOST=unix:///var/run/docker.sock
+        DOCKER_PATH=$(which docker)
+        
+        # Remove any existing container to force recreation with correct paths
+        docker ps -aq --filter "label=devcontainer.config_file=$(pwd)/${{ parameters.configPath }}" | xargs -r docker rm -f 2>/dev/null || true
+        docker ps -aq --filter "label=devcontainer.local_folder=$(pwd)" | xargs -r docker rm -f 2>/dev/null || true
+        
+        devcontainer up \
+          --workspace-folder "$(pwd)" \
+          --config "${{ parameters.configPath }}" \
+          --docker-path "$DOCKER_PATH"
+        
+        devcontainer exec \
+          --workspace-folder "$(pwd)" \
+          --config "${{ parameters.configPath }}" \
+          --docker-path "$DOCKER_PATH" \
+          bash -c '${{ parameters.command }}'
+      else
+        # Remove any existing container to ensure clean state on Linux
+        docker ps -aq --filter "label=devcontainer.config_file=$(pwd)/${{ parameters.configPath }}" | xargs -r docker rm -f 2>/dev/null || true
+        docker ps -aq --filter "label=devcontainer.local_folder=$(pwd)" | xargs -r docker rm -f 2>/dev/null || true
+        
+        devcontainer up --workspace-folder "$(pwd)" --config "${{ parameters.configPath }}"
+        devcontainer exec --workspace-folder "$(pwd)" --config "${{ parameters.configPath }}" \
+          bash -c '${{ parameters.command }}'
+      fi
+    displayName: 'Run devcontainer'

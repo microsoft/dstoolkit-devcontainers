@@ -1,7 +1,6 @@
 {
     "name": "Sample PyTorch GPU Project Dev Container",
     "build": {
-        // use root directory as build context so that requirements-dev.txt is accessible during build
         "context": "../../../",
         "dockerfile": "Dockerfile"
     },
@@ -15,12 +14,14 @@
             "username": "devuser",
         },
     },
+    "initializeCommand": "test -f ${localWorkspaceFolder}/.env || cp ${localWorkspaceFolder}/.env.example ${localWorkspaceFolder}/.env",
     "runArgs": [
-        "--gpus",
-        "all",
         "--env-file",
-        "../../.env"
+        "${localWorkspaceFolder}/.env"
     ],
+    "hostRequirements": {
+        "gpu": "optional"
+    },
     "postCreateCommand": "pre-commit install --overwrite",
     "customizations": {
         "vscode": {

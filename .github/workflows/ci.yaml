@@ -13,6 +13,7 @@ permissions:
   contents: read
   actions: read
   checks: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,18 +40,63 @@ jobs:
           source venv/bin/activate
           ruff check --output-format github
 
-      - name: Run pytest in docker containers
-        run: ./ci-tests.sh
-        env:
-          BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}
+      - name: Setup .env file
+        run: cp .env.example .env
+
+      - name: Build and run pytest (cpu-project)
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: src/sample_cpu_project/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            WORKSPACE_ROOT=$(pwd)
+            cd src/sample_cpu_project
+            COVERAGE_FILE=/tmp/.coverage pytest tests/ \
+              --junitxml=/tmp/test-results-cpu.xml \
+              -o junit_suite_name=cpu-project \
+              --doctest-modules \
+              --cov=. \
+              --cov-config=${WORKSPACE_ROOT}/pyproject.toml \
+              --cov-report=xml:/tmp/coverage-cpu.xml
+            sed -i 's|<package name=\".\"|<package name=\"cpu-project\"|g' /tmp/coverage-cpu.xml
+            sudo cp /tmp/test-results-cpu.xml ${WORKSPACE_ROOT}/test-results-cpu.xml
+            sudo cp /tmp/coverage-cpu.xml ${WORKSPACE_ROOT}/coverage-cpu.xml
+
+      - name: Build and run pytest (gpu-project)
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: src/sample_pytorch_gpu_project/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            WORKSPACE_ROOT=$(pwd)
+            cd src/sample_pytorch_gpu_project
+            COVERAGE_FILE=/tmp/.coverage pytest tests/ \
+              --junitxml=/tmp/test-results-gpu.xml \
+              -o junit_suite_name=gpu-project \
+              --doctest-modules \
+              --cov=. \
+              --cov-config=${WORKSPACE_ROOT}/pyproject.toml \
+              --cov-report=xml:/tmp/coverage-gpu.xml
+            sed -i 's|<package name=\".\"|<package name=\"gpu-project\"|g' /tmp/coverage-gpu.xml
+            sudo cp /tmp/test-results-gpu.xml ${WORKSPACE_ROOT}/test-results-gpu.xml
+            sudo cp /tmp/coverage-gpu.xml ${WORKSPACE_ROOT}/coverage-gpu.xml
+
+      - name: Build and smoke test notebooks devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: notebooks/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            python --version
+            pytest --version
+            ruff --version
 
       - name: Publish Test Results
         uses: dorny/test-reporter@v3
         if: always()
         with:
           name: pytest
-          path: |
-            **/test-results-*.xml
+          path: 'test-results-*.xml'
           reporter: java-junit
 
       - name: Publish Code Coverage Summary Report
@@ -59,7 +105,7 @@ jobs:
           badge: true
           output: both
           format: markdown
-          filename: coverage.xml
+          filename: 'coverage-*.xml'
 
       - name: Add code coverage summary markdown to github step summary
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
@@ -69,5 +115,6 @@ jobs:
         with:
           name: test-and-coverage-results
           path: |
-            **/test-reuslts-*.xml
-            coverage.xml
+            test-results-*.xml
+            coverage-*.xml
+
