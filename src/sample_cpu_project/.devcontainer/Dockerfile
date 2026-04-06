@@ -28,15 +28,10 @@ ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 ENV UV_LINK_MODE=copy
 # Install dependencies (as root for simplicity; devuser can still use installed packages)
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/uv.lock,target=uv.lock \
-    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/pyproject.toml,target=pyproject.toml \
-    uv sync --locked --project $UV_PROJECT_FILE
-
-# install common module related packages
-# This part can be potentially improved by https://docs.astral.sh/uv/concepts/projects/workspaces/#when-not-to-use-workspaces to move away from requirements.txt and gets its own lock file
-COPY src/common/requirements.txt .
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install -r requirements.txt --system
+    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/uv.lock,target=/src/sample_cpu_project/.devcontainer/uv.lock \
+    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/pyproject.toml,target=/src/sample_cpu_project/.devcontainer/pyproject.toml \
+    --mount=type=bind,source=src/common/pyproject.toml,target=/src/common/pyproject.toml \
+    uv sync --locked --project /src/sample_cpu_project/.devcontainer
 
 # Allow devuser to manage packages at runtime without sudo (e.g. uv add)
 RUN chown -R $USERNAME:$USERNAME /usr/local
