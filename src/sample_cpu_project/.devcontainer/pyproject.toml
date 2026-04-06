@@ -2,6 +2,12 @@
 name = ""
 version = "0.1.0"
 requires-python = ">=3.11"
+dependencies = [
+    "common",
+]
+
+[tool.uv.sources]
+common = { path = "../../common", package = false }
 
 [dependency-groups]
 dev = [

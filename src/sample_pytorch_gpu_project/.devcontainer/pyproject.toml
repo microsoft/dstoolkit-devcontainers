@@ -3,12 +3,16 @@ name = ""
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
+    "common",
     "torch==2.11.0",
     "torchvision==0.26.0",
     # the below are used by AML, can be deleted if not using AML
     "mlflow==3.9.0",
     "azureml-mlflow==1.62.0.post2",
 ]
+
+[tool.uv.sources]
+common = { path = "../../common", package = false }
 
 [dependency-groups]
 dev = [
