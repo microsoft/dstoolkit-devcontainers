@@ -18,14 +18,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     && rm -rf /var/lib/apt/lists/*
-# some packages try to create new directories in /usr/local/lib/python3.11/site-packages etc during uv sync so permission needs to be granted
-RUN chown -R $USERNAME:$USERNAME /usr/local
-USER $USERNAME
 
-
-# make all python tools installed by uv accessible
-
-ENV PATH=$PATH:/home/$USERNAME/.local/bin
 # it tends to improve startup time (at the cost of increased installation time)
 ENV UV_COMPILE_BYTECODE=1
 # This prevents uv from creating venv but instead makes it use the system python in container
@@ -34,7 +27,7 @@ ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 
 # Changing the default UV_LINK_MODE silences warnings about not being able to use hard links since the cache and sync target are on separate file systems
 ENV UV_LINK_MODE=copy
-# Install dependencies
+# Install dependencies (as root for simplicity; devuser can still use installed packages)
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=src/sample_pytorch_gpu_project/.devcontainer/uv.lock,target=uv.lock \
     --mount=type=bind,source=src/sample_pytorch_gpu_project/.devcontainer/pyproject.toml,target=pyproject.toml \
@@ -43,6 +36,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # install common module related packages
 # This part can be potentially improved by https://docs.astral.sh/uv/concepts/projects/workspaces/#when-not-to-use-workspaces to move away from requirements.txt and gets its own lock file
 COPY src/common/requirements.txt .
-RUN uv pip install --no-cache-dir -r requirements.txt --system
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install -r requirements.txt --system
+
+# Allow devuser to manage packages at runtime without sudo (e.g. uv add)
+RUN chown -R $USERNAME:$USERNAME /usr/local
+USER $USERNAME
+ENV PATH=$PATH:/home/$USERNAME/.local/bin
 
 RUN az extension add --name ml --yes
