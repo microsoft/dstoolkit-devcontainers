@@ -1,6 +1,8 @@
 # Dev Containers for ML feasibility study with VS Code
 
-A machine learning and data science project template that makes it easy to work with multiple Docker based [VSCode Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) in the same repository. The template also makes it easy to transition projects to the cloud and production by including automated code quality checks, pytest configuration, CI pipeline templates and a sample for running on Azure Machine Learning.
+[![CI](https://github.com/microsoft/dstoolkit-devcontainers/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/microsoft/dstoolkit-devcontainers/actions/workflows/ci.yaml)
+
+A machine learning and data science project template that makes it easy to work with multiple Docker based [VSCode Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) in the same repository. The template leverages [uv](https://github.com/astral-sh/uv), an extremely fast Python package and project manager as a base for better productivity. The template also makes it easy to transition projects to the cloud and production by including automated code quality checks, pytest configuration, CI pipeline templates and a sample for running on Azure Machine Learning.
 
 ## Contents
 
@@ -10,7 +12,7 @@ A machine learning and data science project template that makes it easy to work 
     - [Features](#features)
   - [Getting Started](#getting-started)
     - [How to setup dev environment?](#how-to-setup-dev-environment)
-  - [How to create a new directory under src with a new environment](#how-to-create-a-new-directory-under-src-with-a-new-environment)
+  - [How to update python packages in the dev container](#how-to-update-python-packages-in-the-dev-container)
   - [Directory Structure](#directory-structure)
     - [`notebooks` directory vs `src` directory](#notebooks-directory-vs-src-directory)
   - [AML Example](#aml-example)
@@ -57,15 +59,32 @@ This section provides a comprehensive guide on how to set up a development envir
 1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the `notebooks` directory.
 1. VS Code will then build and start up a container, connect this window to Dev Container: `notebooks`, and install VS Code extensions specified in `notebooks/.devcontainer/devcontainer.json`. `pre-commit install --overwrite` runs as part of `postCreateCommand` in `devcontainer.json` and this will setup your git precommit hook automatically.
 1. Now set up is done. If you want to develop in another directory for example under `src`, run `Dev Containers: Open Folder in Container...` and go to that directory that has `.devcontainer` and that will setup an dev environment for that directory.
-1. When you or others update either `requirements.txt` or `Dockerfile` in your working directory, make sure to rebuild your container to apply those changes to container. Run `Dev Containers: Rebuild and Reopen in Container...` for that.
+1. When you or others update either `pyproject.toml` or `Dockerfile` in your working directory, make sure to rebuild your container to apply those changes to container. Run `Dev Containers: Rebuild and Reopen in Container...` for that.
 
 ## How to create a new directory under src with a new environment
 
 1. Copy `src/sample_cpu_project/` under `src` and rename it. If you need gpu environment, base off of `src/sample_pytorch_gpu_project` instead
-1. Update `COPY sample_cpu_project/.devcontainer/requirements.txt` in `Dockerfile` with a new path
+1. Update `COPY src/sample_cpu_project/.devcontainer/pyproject.toml src/sample_cpu_project/.devcontainer/uv.lock` in `Dockerfile` with a new path
 1. Update other parts of `Dockerfile` if you need
-1. Update `requirements.txt` if you need
 1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
+1. If you need to update python packages, stay inside DevContainer you just built and follow the steps below
+   1. Update `.devcontainer/pyproject.toml` and add/remove new python packages you need in `project.dependencies` section
+   1. Run `uv lock --project $UV_PROJECT_FILE` to update the project's lockfile `.devcontainer/uv.lock` with the updated python packages. `$UV_PROJECT_FILE` is already set automatically during docker build so you don't need to manually set it
+1. Rerun `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
+
+## How to update python packages in the dev container
+
+This solution uses [uv](https://docs.astral.sh/uv) to manage python packages in the dev container. `uv` is a fast and efficient Python package and project manager that simplifies dependency management and ensures consistency across environments. It is installed in the dev container and is used to manage python packages in the dev container. `uv` is also used to create a lock file (`uv.lock`) that contains the list of all python packages and their versions that are installed in the dev container. This lock file is used to ensure that the same versions of the packages and dependencies are installed in every devcontainer build.
+
+To manage Python packages within your active dev container, execute the following commands according to your needs:
+
+- To add a package: `uv add requests --project $UV_PROJECT_FILE`
+- To add a specific version of a package: `uv add 'requests==2.31.0' --project $UV_PROJECT_FILE`
+- To remove a package: `uv remove requests --project $UV_PROJECT_FILE`
+- To upgrade a package: `uv lock --upgrade-package requests --project $UV_PROJECT_FILE`
+
+These commands update both `pyproject.toml` and `uv.lock` files automatically.
+Check for more details at [The official documentation for how to manage dependencies in uv](https://docs.astral.sh/uv/guides/projects/#managing-dependencies)
 
 ## Directory Structure
 
@@ -83,7 +102,7 @@ This section gives you overview of the directory structure of this template. Onl
 │   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
 │   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
 │   │   ├── Dockerfile             # referred in devcontainer.json
-│   │   └── requirements.txt       # includes python package list for notebooks. used in Dockerfile
+│   │   └── pyproject.toml       # includes python package list for notebooks. used in Dockerfile
 │   └── sample_notebook.py         # example of interactive python script
 ├── pyproject.toml                 # Setting file for ruff, pytest and pytest-cov
 └── src
@@ -93,7 +112,7 @@ This section gives you overview of the directory structure of this template. Onl
     │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
     │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
     │   │   ├── Dockerfile         # referred in devcontainer.json. Supports only CPU
-    │   │   └── requirements.txt   # includes python package list for sample_cpu_project. used in Dockerfile
+    │   │   └── pyproject.toml   # includes python package list for sample_cpu_project. used in Dockerfile
     │   ├── sample_main.py         
     │   └── tests                  # pytest scripts for sample_cpu_project goes here
     │       └── test_dummy.py      # pytest script example
@@ -102,7 +121,7 @@ This section gives you overview of the directory structure of this template. Onl
         ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
         │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
         │   ├── Dockerfile         # referred in devcontainer.json. Supports GPU
-        │   └── requirements.txt   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
+        │   └── pyproject.toml   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
         ├── aml_example/           # Sample AML CLI v2 Components-based pipeline, including setup YAML. See sample_pytorch_gpu_project/README for full details of files in this directory.
         ├── sample_main.py        
         ├── inference.py           # Example pytorch inference/eval script that also works with aml_example

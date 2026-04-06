@@ -1,4 +1,7 @@
 FROM python:3.11.15
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+
 # create non-root user and set the default user
 ARG USERNAME=devuser
 ARG USER_UID=1000
@@ -12,20 +15,24 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
+    && rm -rf /var/lib/apt/lists/*
+
+# it tends to improve startup time (at the cost of increased installation time)
+ENV UV_COMPILE_BYTECODE=1
+# This prevents uv from creating venv but instead makes it use the system python in container
+ENV UV_PROJECT_ENVIRONMENT=/usr/local
+ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
+
+# Changing the default UV_LINK_MODE silences warnings about not being able to use hard links since the cache and sync target are on separate file systems
+ENV UV_LINK_MODE=copy
+# Install dependencies (as root for simplicity; devuser can still use installed packages)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=notebooks/.devcontainer/uv.lock,target=uv.lock \
+    --mount=type=bind,source=notebooks/.devcontainer/pyproject.toml,target=pyproject.toml \
+    uv sync --locked --project $UV_PROJECT_FILE
+
+# Allow devuser to manage packages at runtime without sudo (e.g. uv add)
+RUN chown -R $USERNAME:$USERNAME /usr/local
 USER $USERNAME
-
-# Make pip-installed tools accessible
 ENV PATH=$PATH:/home/$USERNAME/.local/bin
-
-# Install development tools (linters, formatters, test runners, etc.)
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --cache-dir=/root/.cache/pip pip --upgrade
-COPY requirements-dev.txt .
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --cache-dir=/root/.cache/pip -r requirements-dev.txt
-
-# Install notebooks related dependencies
-COPY notebooks/.devcontainer/requirements.txt .
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --cache-dir=/root/.cache/pip -r requirements.txt
