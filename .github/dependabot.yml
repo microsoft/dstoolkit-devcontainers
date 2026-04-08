@@ -5,17 +5,6 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directories:
-      - "**/*"
-    schedule:
-      interval: "monthly"
-    groups:
-      pip-minor-patch-updates:
-        applies-to: version-updates
-        update-types:
-        - "minor"
-        - "patch"
   - package-ecosystem: "uv"
     directories:
       - "**/*"
