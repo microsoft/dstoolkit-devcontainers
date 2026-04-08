@@ -81,7 +81,7 @@ az ml environment create --file aml_example/aml_setup/create-env.yaml -g <YOU_AM
 
 #### **Updating the AML Custom Environment**
 
-Note the AML environment will need to be updated manually anytime new dependencies are added to `.devcontainer/pyproject.toml` or `.devcontainer/Dockerfile` is updated. Also if you add new dependencies in `src/common/requirements.txt` that are needed in `src/sample_pytorch_gpu_project` then this will also require an environment rebuild. The environment can be rebuilt by running the exact same command used above to create the environment.
+Note the AML environment will need to be updated manually anytime new dependencies are added to `.devcontainer/pyproject.toml` or `.devcontainer/Dockerfile` is updated. The environment can be rebuilt by running the exact same command used above to create the environment.
 
 ## Run the AML Component Example
 

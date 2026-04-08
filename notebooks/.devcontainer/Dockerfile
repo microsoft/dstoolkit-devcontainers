@@ -26,7 +26,8 @@ ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 
 # Changing the default UV_LINK_MODE silences warnings about not being able to use hard links since the cache and sync target are on separate file systems
 ENV UV_LINK_MODE=copy
-# Install dependencies (as root for simplicity; devuser can still use installed packages)
+# Install dependencies using bind mounts instead of COPY to avoid extra layers
+# This is the recommended approach by uv: https://docs.astral.sh/uv/guides/integration/docker/#installing-a-project
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=notebooks/.devcontainer/uv.lock,target=uv.lock \
     --mount=type=bind,source=notebooks/.devcontainer/pyproject.toml,target=pyproject.toml \

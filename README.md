@@ -12,6 +12,7 @@ A machine learning and data science project template that makes it easy to work 
     - [Features](#features)
   - [Getting Started](#getting-started)
     - [How to setup dev environment?](#how-to-setup-dev-environment)
+  - [How to create a new directory under src with a new environment](#how-to-create-a-new-directory-under-src-with-a-new-environment)
   - [How to update python packages in the dev container](#how-to-update-python-packages-in-the-dev-container)
   - [Directory Structure](#directory-structure)
     - [`notebooks` directory vs `src` directory](#notebooks-directory-vs-src-directory)
@@ -30,7 +31,7 @@ A machine learning and data science project template that makes it easy to work 
 
 This repository provides a [VSCode Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) based project template that can help accelerate your Machine Learning inner-loop development phase. The template covers the phases from early ML experimentation (local training/testing) until production oriented ML model training (cloud based training/testing with bigger CPUs and GPUs).
 
-During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of Dev Containers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU Dev Container setup as examples. To support multiple different ML approaches with different python environments to be experimented in one project, this solution allows multiple different Dev Containers to be used in one repository while having a "common" module that will be installed into all Dev Container to enable code reuse across different Dev Containers.
+During the early phase of Machine Learning project, you may face challenges such as each data scientist creating various different python environments that span across CPU and GPU that tend to have different setup procedures. With the power of Dev Containers, you can automate environment setup process across the team and every data scientist will get the exact same environment automatically. This template provides both CPU and GPU Dev Container setup as examples. To support multiple different ML approaches with different python environments to be experimented in one project, this solution allows multiple different Dev Containers to be used in one repository.
 
 Another challenge you may face is each data scientist creating a low quality codebase. That is fine during the experimentation stage to keep the team agility high and maximize your team’s experimentation throughput. But when you move to the model productionization stage, you experience the burden of bringing code quality up to production level. With the power of python tools and VSCode extensions configured for this template on top of Dev Containers, you can keep the code quality high automatically without losing your team’s agility and experimentation throughput and ease the transition to the productionization phase.
 
@@ -102,17 +103,17 @@ This section gives you overview of the directory structure of this template. Onl
 │   ├── .devcontainer              # dev container related configuration files goes to here following VSCode convention
 │   │   ├── devcontainer.json      # dev container configuration and VS Code settings, extensions etc.
 │   │   ├── Dockerfile             # referred in devcontainer.json
-│   │   └── pyproject.toml       # includes python package list for notebooks. used in Dockerfile
+│   │   ├── pyproject.toml         # includes python package list for notebooks. used in Dockerfile
+│   │   └── uv.lock                # lock file for python packages. used in Dockerfile
 │   └── sample_notebook.py         # example of interactive python script
 ├── pyproject.toml                 # Setting file for ruff, pytest and pytest-cov
 └── src
-    ├── common                     # this module is accessible from all modules under src. put functions  you want to import across the projects here
-    │   └── requirements.txt       # python package list for common module. installed in all Dockerfile under src. python tools for src goes to here too
     ├── sample_cpu_project         # cpu project example. Setup process is covered in Section: How to setup dev environment?
     │   ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
     │   │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
     │   │   ├── Dockerfile         # referred in devcontainer.json. Supports only CPU
-    │   │   └── pyproject.toml   # includes python package list for sample_cpu_project. used in Dockerfile
+    │   │   ├── pyproject.toml     # includes python package list for sample_cpu_project. used in Dockerfile
+    │   │   └── uv.lock            # lock file for python packages. used in Dockerfile
     │   ├── sample_main.py         
     │   └── tests                  # pytest scripts for sample_cpu_project goes here
     │       └── test_dummy.py      # pytest script example
@@ -121,7 +122,8 @@ This section gives you overview of the directory structure of this template. Onl
         ├── .devcontainer          # dev container related configuration files goes to here following VSCode convention
         │   ├── devcontainer.json  # dev container configuration and VS Code settings, extensions etc.
         │   ├── Dockerfile         # referred in devcontainer.json. Supports GPU
-        │   └── pyproject.toml   # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
+        │   ├── pyproject.toml     # includes python package list for sample_pytorch_gpu_project. used in Dockerfile
+        │   └── uv.lock            # lock file for python packages. used in Dockerfile
         ├── aml_example/           # Sample AML CLI v2 Components-based pipeline, including setup YAML. See sample_pytorch_gpu_project/README for full details of files in this directory.
         ├── sample_main.py        
         ├── inference.py           # Example pytorch inference/eval script that also works with aml_example
@@ -224,7 +226,6 @@ ssh-add
 ## Future Roadmap
 
 - Add Docker build caching to Azure DevOps MS hosted CI pipeline
-- Investigate making `src/common` installed with `pip -e`
 
 ## Contributing
 
