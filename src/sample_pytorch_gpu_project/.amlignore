@@ -3,7 +3,7 @@
 **/logs
 **/tests
 **/__pycache__
-**/.mypy_cache
+**/.ty_cache
 **/.pytest_cache
 **/.vscode
 **/junit

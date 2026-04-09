@@ -40,6 +40,7 @@ Another challenge you may face is each data scientist creating a low quality cod
 - Multiple Dev Container samples (both CPU and GPU) with many common config steps already configured as following:
   - Automated code quality checks (linter and auto formatter) and automated fix when possible with ruff on VSCode on save
   - Automated code quality checks (linter and auto formatter) with ruff as precommit hook
+  - Type checking with [ty](https://github.com/astral-sh/ty) integrated as a VSCode extension for real-time feedback in the editor. ty is chosen over mypy for its significantly faster performance. ty is not included in CI or pre-commit hooks because it is still [pre-1.0](https://github.com/astral-sh/ty#version-policy) with no stable API ([milestones](https://github.com/astral-sh/ty/milestones)), meaning diagnostics may change between versions. Once ty stabilizes, the recommendation is to run it in CI in non-strict mode to catch real type errors without requiring full annotation coverage.
   - Zero effort transition from local env to Azure Machine Learning (cloud based env) by leveraging the same Dockerfile
   - Pre-configured VSCode extensions installed such as python, jupyter, shellcheck, code-spell-checker, git tools etc
 - [Github Actions and Azure DevOps CI pipelines](#ci-pipeline) that run linter (ruff) and pytest with test result reporting and coverage reporting
@@ -226,6 +227,7 @@ ssh-add
 ## Future Roadmap
 
 - Add Docker build caching to Azure DevOps MS hosted CI pipeline
+- Once [ty reaches stable](https://github.com/astral-sh/ty/milestones), add type checking to CI and pre-commit hooks in non-strict mode (default rule set) to catch real type errors without requiring full annotation coverage
 
 ## Contributing
 
