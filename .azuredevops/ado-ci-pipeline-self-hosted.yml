@@ -35,12 +35,12 @@ steps:
     inputs:
       versionSpec: 3.11
 
+  # Using pip here instead of uv/uvx because Azure DevOps doesn't have native uv support
+  # (unlike GitHub Actions which has astral-sh/setup-uv), and installing uv just to run
+  # these tools would add unnecessary overhead.
   - script: |
-      python -m venv venv
-      source venv/bin/activate
-      python -m pip install --upgrade pip
       pip install ruff pytest-azurepipelines
-    displayName: "Install requirements"
+    displayName: "Install ruff and pytest-azurepipelines"
 
   - task: UseDotNet@2
     inputs: 
@@ -48,9 +48,7 @@ steps:
       workingDirectory: "src/"
       version: '6.x'
 
-  # files under venv will be automatically excluded from ruff check by default https://docs.astral.sh/ruff/settings/#exclude
   - bash: |
-      source venv/bin/activate
       ruff check --output-format azure
     displayName: "Run ruff linter"
     

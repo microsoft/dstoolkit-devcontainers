@@ -131,14 +131,13 @@ If you don't need to use any of the sample AML integrations follow the steps bel
     RUN az extension add --name ml
     ```
 
-2. Remove the `mlflow` dependencies in `.devcontainer/pyproject.toml`:
+2. Remove the `mlflow` dependencies in `.devcontainer/pyproject.toml` and update the lockfile:
 
-    ```txt
-    mlflow==x.x.x
-    azureml-mlflow==x.x.x
+    ```bash
+    uv remove mlflow azureml-mlflow --project $UV_PROJECT_FILE
     ```
 
-    Note that you could keep the `mlflow` dependency if you want to keep `train.py` and `inference.py` for local runs with `mlflow` logging.
+    This will update both `pyproject.toml` and `uv.lock` automatically. Note that you could keep the `mlflow` dependency if you want to keep `train.py` and `inference.py` for local runs with `mlflow` logging.
 
 3. Delete the entire `aml_example` directory.
 
