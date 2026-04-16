@@ -28,8 +28,8 @@ ENV UV_LINK_MODE=copy
 # Install dependencies using bind mounts instead of COPY to avoid extra layers
 # This is the recommended approach by uv: https://docs.astral.sh/uv/guides/integration/docker/#installing-a-project
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/uv.lock,target=uv.lock \
-    --mount=type=bind,source=src/sample_cpu_project/.devcontainer/pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --locked
 
 # Allow devuser to manage packages at runtime without sudo (e.g. uv add)

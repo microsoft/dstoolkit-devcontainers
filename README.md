@@ -65,8 +65,7 @@ This section provides a comprehensive guide on how to set up a development envir
 ## How to create a new directory under src with a new environment
 
 1. Copy `src/sample_cpu_project/` under `src` and rename it. If you need gpu environment, base off of `src/sample_pytorch_gpu_project` instead
-1. Update `COPY src/sample_cpu_project/.devcontainer/pyproject.toml src/sample_cpu_project/.devcontainer/uv.lock` in `Dockerfile` with a new path
-1. Update other parts of `Dockerfile` if you need
+1. Update `Dockerfile` if you need
 1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
 1. If you need to update python packages, stay inside DevContainer you just built and follow the steps below
    1. Update `.devcontainer/pyproject.toml` and add/remove new python packages you need in `project.dependencies` section
