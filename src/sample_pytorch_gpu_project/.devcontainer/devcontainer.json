@@ -21,6 +21,9 @@
         "--env-file",
         "../../.env"
     ],
+    "remoteEnv": {
+        "UV_PROJECT": "${containerWorkspaceFolder}/.devcontainer"
+    },
     "postCreateCommand": "pre-commit install --overwrite",
     "customizations": {
         "vscode": {

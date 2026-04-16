@@ -134,7 +134,7 @@ If you don't need to use any of the sample AML integrations follow the steps bel
 2. Remove the `mlflow` dependencies in `.devcontainer/pyproject.toml` and update the lockfile:
 
     ```bash
-    uv remove mlflow azureml-mlflow --project $UV_PROJECT_FILE
+    uv remove mlflow azureml-mlflow
     ```
 
     This will update both `pyproject.toml` and `uv.lock` automatically. Note that you could keep the `mlflow` dependency if you want to keep `train.py` and `inference.py` for local runs with `mlflow` logging.

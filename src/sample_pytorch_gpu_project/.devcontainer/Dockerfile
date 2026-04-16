@@ -23,7 +23,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 ENV UV_COMPILE_BYTECODE=1
 # This prevents uv from creating venv but instead makes it use the system python in container
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
-ENV UV_PROJECT_FILE=.devcontainer/pyproject.toml
 
 # Changing the default UV_LINK_MODE silences warnings about not being able to use hard links since the cache and sync target are on separate file systems
 ENV UV_LINK_MODE=copy
@@ -32,7 +31,7 @@ ENV UV_LINK_MODE=copy
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=src/sample_pytorch_gpu_project/.devcontainer/uv.lock,target=uv.lock \
     --mount=type=bind,source=src/sample_pytorch_gpu_project/.devcontainer/pyproject.toml,target=pyproject.toml \
-    uv sync --locked --project $UV_PROJECT_FILE
+    uv sync --locked
 
 # Allow devuser to manage packages at runtime without sudo (e.g. uv add)
 RUN chown -R $USERNAME:$USERNAME /usr/local

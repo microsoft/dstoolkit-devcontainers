@@ -70,7 +70,7 @@ This section provides a comprehensive guide on how to set up a development envir
 1. Run `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
 1. If you need to update python packages, stay inside DevContainer you just built and follow the steps below
    1. Update `.devcontainer/pyproject.toml` and add/remove new python packages you need in `project.dependencies` section
-   1. Run `uv lock --project $UV_PROJECT_FILE` to update the project's lockfile `.devcontainer/uv.lock` with the updated python packages. `$UV_PROJECT_FILE` is already set automatically during docker build so you don't need to manually set it
+   1. Run `uv lock` to update the project's lockfile `.devcontainer/uv.lock` with the updated python packages. `UV_PROJECT` is already set automatically via `remoteEnv` in `devcontainer.json` so you don't need to manually specify the project path
 1. Rerun `Dev Containers: Open Folder in Container...` from the Command Palette (F1) and select the new directory and make sure you can successfully open the new directory on VS Code running in a container
 
 ## How to update python packages in the dev container
@@ -79,10 +79,10 @@ This solution uses [uv](https://docs.astral.sh/uv) to manage python packages in 
 
 To manage Python packages within your active dev container, execute the following commands according to your needs:
 
-- To add a package: `uv add requests --project $UV_PROJECT_FILE`
-- To add a specific version of a package: `uv add 'requests==2.31.0' --project $UV_PROJECT_FILE`
-- To remove a package: `uv remove requests --project $UV_PROJECT_FILE`
-- To upgrade a package: `uv lock --upgrade-package requests --project $UV_PROJECT_FILE`
+- To add a package: `uv add requests`
+- To add a specific version of a package: `uv add 'requests==2.31.0'`
+- To remove a package: `uv remove requests`
+- To upgrade a package: `uv lock --upgrade-package requests`
 
 These commands update both `pyproject.toml` and `uv.lock` files automatically.
 Check for more details at [The official documentation for how to manage dependencies in uv](https://docs.astral.sh/uv/guides/projects/#managing-dependencies)
