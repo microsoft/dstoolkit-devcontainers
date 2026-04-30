@@ -5,13 +5,13 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip"
+  - package-ecosystem: "uv"
     directories:
       - "**/*"
     schedule:
       interval: "monthly"
     groups:
-      pip-minor-patch-updates:
+      uv-minor-patch-updates:
         applies-to: version-updates
         update-types:
         - "minor"

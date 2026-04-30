@@ -1,2 +1,0 @@
-# libraries for common modules
-ipykernel==7.2.0

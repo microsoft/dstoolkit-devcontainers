@@ -1,8 +1,7 @@
 {
     "name": "Sample CPU Project Dev Container",
     "build": {
-        // use root directory as build context so that requirements-dev.txt is accessible during build
-        "context": "../../../",
+        "context": ".",
         "dockerfile": "Dockerfile"
     },
     "shutdownAction": "none",
@@ -19,28 +18,25 @@
         "--env-file",
         "../../.env"
     ],
+    "remoteEnv": {
+        "UV_PROJECT": "${containerWorkspaceFolder}/.devcontainer"
+    },
     "postCreateCommand": "pre-commit install --overwrite",
     "customizations": {
         "vscode": {
             "extensions": [
                 "codezombiech.gitignore",
                 "DavidAnson.vscode-markdownlint",
-                "donjayamanne.githistory",
-                "donjayamanne.python-environment-manager",
-                "donjayamanne.vscode-default-python-kernel",
                 "eamodio.gitlens",
                 "GitHub.copilot",
-                "github.copilot-chat",
                 "Gruntfuggly.todo-tree",
                 "ionutvmi.path-autocomplete",
-                "marchiore.csvtomarkdown",
                 "mechatroner.rainbow-csv",
                 "ms-azure-devops.azure-pipelines",
                 "ms-python.mypy-type-checker",
                 "ms-python.python",
                 "ms-toolsai.jupyter",
                 "ms-vsliveshare.vsliveshare",
-                "njpwerner.autodocstring",
                 "redhat.vscode-yaml",
                 "streetsidesoftware.code-spell-checker",
                 "timonwong.shellcheck",
@@ -48,7 +44,6 @@
                 "grapecity.gc-excelviewer"
             ],
             "settings": {
-                "autoDocstring.docstringFormat": "google",
                 "mypy-type-checker.importStrategy": "fromEnvironment",
                 "python.testing.pytestEnabled": true,
                 "python.defaultInterpreterPath": "/usr/local/bin/python",
