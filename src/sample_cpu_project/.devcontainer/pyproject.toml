@@ -1,5 +1,5 @@
 [project]
-name = ""
+name = "sample-cpu-project"
 version = "0.1.0"
 requires-python = ">=3.11"
 
