@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = ""
+name = "sample-cpu-project"
 version = "0.1.0"
 source = { virtual = "." }
 
