@@ -70,10 +70,16 @@ steps:
             --doctest-modules \
             --cov=. \
             --cov-config=/workspaces/repo/pyproject.toml \
-            --cov-report=xml:/tmp/coverage-cpu.xml &&
-          sed -i "s|<package name=\".\"|<package name=\"cpu-project\"|g" /tmp/coverage-cpu.xml &&
-          sudo cp /tmp/test-results-cpu.xml /workspaces/repo/test-results-cpu.xml &&
-          sudo cp /tmp/coverage-cpu.xml /workspaces/repo/coverage-cpu.xml
+            --cov-report=xml:/tmp/coverage-cpu.xml
+          pytest_exit=$?
+          report_exit=0
+          sed -i "s|<package name=\".\"|<package name=\"cpu-project\"|g" /tmp/coverage-cpu.xml || report_exit=$?
+          sudo cp /tmp/test-results-cpu.xml /workspaces/repo/test-results-cpu.xml || report_exit=$?
+          sudo cp /tmp/coverage-cpu.xml /workspaces/repo/coverage-cpu.xml || report_exit=$?
+          if [ "$pytest_exit" -ne 0 ]; then
+            exit "$pytest_exit"
+          fi
+          exit "$report_exit"
         '
     displayName: "Build and run pytest (cpu-project)"
 
@@ -92,10 +98,16 @@ steps:
             --doctest-modules \
             --cov=. \
             --cov-config=/workspaces/repo/pyproject.toml \
-            --cov-report=xml:/tmp/coverage-gpu.xml &&
-          sed -i "s|<package name=\".\"|<package name=\"gpu-project\"|g" /tmp/coverage-gpu.xml &&
-          sudo cp /tmp/test-results-gpu.xml /workspaces/repo/test-results-gpu.xml &&
-          sudo cp /tmp/coverage-gpu.xml /workspaces/repo/coverage-gpu.xml
+            --cov-report=xml:/tmp/coverage-gpu.xml
+          pytest_exit=$?
+          report_exit=0
+          sed -i "s|<package name=\".\"|<package name=\"gpu-project\"|g" /tmp/coverage-gpu.xml || report_exit=$?
+          sudo cp /tmp/test-results-gpu.xml /workspaces/repo/test-results-gpu.xml || report_exit=$?
+          sudo cp /tmp/coverage-gpu.xml /workspaces/repo/coverage-gpu.xml || report_exit=$?
+          if [ "$pytest_exit" -ne 0 ]; then
+            exit "$pytest_exit"
+          fi
+          exit "$report_exit"
         '
     displayName: "Build and run pytest (gpu-project)"
 
