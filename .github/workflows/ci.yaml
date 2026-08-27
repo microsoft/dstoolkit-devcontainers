@@ -13,6 +13,7 @@ permissions:
   contents: read
   actions: read
   checks: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,18 +29,80 @@ jobs:
         run: |
           uvx ruff check --output-format github
 
-      - name: Run pytest in docker containers
-        run: ./ci-tests.sh
-        env:
-          BUILD_ARTIFACTSTAGINGDIRECTORY: ${{ github.workspace }}
+      - name: Setup .env file
+        run: |
+          cp .env.example .env
+          # devcontainer.json runArgs use relative --env-file paths (../../.env for
+          # src/* projects, ../.env for notebooks) that resolve from the devcontainer
+          # CLI's CWD (= $GITHUB_WORKSPACE). Pre-create them at the expected hosts
+          # paths so docker can find them.
+          cp .env.example ../.env
+          cp .env.example ../../.env
+
+      - name: Build and run pytest (cpu-project)
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: src/sample_cpu_project/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            WORKSPACE_ROOT=$(pwd)
+            cd src/sample_cpu_project
+            COVERAGE_FILE=/tmp/.coverage pytest tests/ \
+              --junitxml=/tmp/test-results-cpu.xml \
+              -o junit_suite_name=cpu-project \
+              --doctest-modules \
+              --cov=. \
+              --cov-config=${WORKSPACE_ROOT}/pyproject.toml \
+              --cov-report=xml:/tmp/coverage-cpu.xml
+            sed -i 's|<package name=\".\"|<package name=\"cpu-project\"|g' /tmp/coverage-cpu.xml
+            sudo cp /tmp/test-results-cpu.xml ${WORKSPACE_ROOT}/test-results-cpu.xml
+            sudo cp /tmp/coverage-cpu.xml ${WORKSPACE_ROOT}/coverage-cpu.xml
+
+      - name: Strip --gpus all from GPU devcontainer.json (CI workaround)
+        # GitHub-hosted runners don't have GPU device drivers, so docker fails
+        # on --gpus all. devcontainer.json is left untouched in the repo so
+        # local users keep automatic GPU passthrough.
+        run: |
+          python3 -c "
+          import re, pathlib
+          p = pathlib.Path('src/sample_pytorch_gpu_project/.devcontainer/devcontainer.json')
+          p.write_text(re.sub(r'\s*\"--gpus\",\s*\"all\",', '', p.read_text()))
+          "
+      - name: Build and run pytest (gpu-project)
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: src/sample_pytorch_gpu_project/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            WORKSPACE_ROOT=$(pwd)
+            cd src/sample_pytorch_gpu_project
+            COVERAGE_FILE=/tmp/.coverage pytest tests/ \
+              --junitxml=/tmp/test-results-gpu.xml \
+              -o junit_suite_name=gpu-project \
+              --doctest-modules \
+              --cov=. \
+              --cov-config=${WORKSPACE_ROOT}/pyproject.toml \
+              --cov-report=xml:/tmp/coverage-gpu.xml
+            sed -i 's|<package name=\".\"|<package name=\"gpu-project\"|g' /tmp/coverage-gpu.xml
+            sudo cp /tmp/test-results-gpu.xml ${WORKSPACE_ROOT}/test-results-gpu.xml
+            sudo cp /tmp/coverage-gpu.xml ${WORKSPACE_ROOT}/coverage-gpu.xml
+
+      - name: Build and smoke test notebooks devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: notebooks/.devcontainer/devcontainer.json
+          push: never
+          runCmd: |
+            python --version
+            pytest --version
+            ruff --version
 
       - name: Publish Test Results
         uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         if: always()
         with:
           name: pytest
-          path: |
-            **/test-results-*.xml
+          path: 'test-results-*.xml'
           reporter: java-junit
 
       - name: Publish Code Coverage Summary Report
@@ -48,7 +111,7 @@ jobs:
           badge: true
           output: both
           format: markdown
-          filename: coverage.xml
+          filename: 'coverage-*.xml'
 
       - name: Add code coverage summary markdown to github step summary
         run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
@@ -58,5 +121,6 @@ jobs:
         with:
           name: test-and-coverage-results
           path: |
-            **/test-reuslts-*.xml
-            coverage.xml
+            test-results-*.xml
+            coverage-*.xml
+
