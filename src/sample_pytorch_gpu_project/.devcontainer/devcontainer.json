@@ -20,6 +20,9 @@
         "--env-file",
         "../../.env"
     ],
+    "hostRequirements": {
+        "gpu": "optional"
+    },
     "remoteEnv": {
         "UV_PROJECT": "${containerWorkspaceFolder}/.devcontainer"
     },
