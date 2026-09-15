@@ -1,13 +1,11 @@
-# Azure DevOps pipeline for CI (self-hoseted version)
-# As the Microsoft-hosted agent option has a limit of 10GB of storage for disk outputs from a pipeline, 
+# Azure DevOps pipeline for CI (self-hosted version)
+# As the Microsoft-hosted agent option has a limit of 10GB of storage for disk outputs from a pipeline,
 # this causes an issue when the Docker images for modules under src require more than 10GB of storage.
-# The self-hosted agent option allows the storage to be increased based on the VM size. This version 
-# includes extra clean-up and space management steps relating to docker builds, but it otherwise equivalent
+# The self-hosted agent option allows the storage to be increased based on the VM size. This version
+# includes extra clean-up and space management steps relating to docker builds, but it is otherwise equivalent
 # to the .azuredevops/ado-ci-pipeline-ms-hosted.yml version.
 # For setting up a CI pipeline with a self-hosted Linux agent see:
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops
-# Note that the CI scripts that this pipeline runs (ci-tests.sh) is designed to be run on a Linux agent, 
-# but could be adapated to other OSs.
 
 
 trigger:
@@ -16,10 +14,10 @@ trigger:
 pool:
   name: Default
   demands:
-  - agent.name -equals mc-ubuntu-agent
+    - agent.name -equals mc-ubuntu-agent
 workspace:
   clean: all
-  
+
 steps:
   - script: |
       docker image prune -f
@@ -37,41 +35,104 @@ steps:
 
   # Using pip here instead of uv/uvx because Azure DevOps doesn't have native uv support
   # (unlike GitHub Actions which has astral-sh/setup-uv), and installing uv just to run
-  # these tools would add unnecessary overhead.
-  - script: |
-      pip install ruff pytest-azurepipelines
-    displayName: "Install ruff and pytest-azurepipelines"
+  # ruff would add unnecessary overhead.
+  - script: pip install ruff
+    displayName: "Install ruff"
 
-  - task: UseDotNet@2
-    inputs: 
-      packageType: 'sdk'
-      workingDirectory: "src/"
-      version: '6.x'
+  - bash: ruff check --output-format azure
+    displayName: "Run ruff linter"
+
+  - script: |
+      cp .env.example .env
+      # devcontainer.json runArgs use relative --env-file paths (../../.env for
+      # src/* projects, ../.env for notebooks) that resolve from the devcontainer
+      # CLI's CWD (= the workspace folder). Pre-create them at the expected host
+      # paths so docker can find them.
+      cp .env.example ../.env
+      cp .env.example ../../.env
+    displayName: "Setup .env file"
+
+  - script: npm install -g @devcontainers/cli
+    displayName: "Install devcontainer CLI"
 
   - bash: |
-      ruff check --output-format azure
-    displayName: "Run ruff linter"
-    
-  - task: Bash@3
-    inputs:
-      targetType: 'filePath'
-      filePath: ci-tests.sh
-    displayName: "Run pytest in docker containers"
+      set -e
+      WORKSPACE_ROOT="$(pwd)"
+      devcontainer up --workspace-folder "$WORKSPACE_ROOT" \
+        --config src/sample_cpu_project/.devcontainer/devcontainer.json
+      devcontainer exec --workspace-folder "$WORKSPACE_ROOT" \
+        --config src/sample_cpu_project/.devcontainer/devcontainer.json \
+        bash -c '
+          cd /workspaces/repo/src/sample_cpu_project &&
+          COVERAGE_FILE=/tmp/.coverage pytest tests/ \
+            --junitxml=/tmp/test-results-cpu.xml \
+            -o junit_suite_name=cpu-project \
+            --doctest-modules \
+            --cov=. \
+            --cov-config=/workspaces/repo/pyproject.toml \
+            --cov-report=xml:/tmp/coverage-cpu.xml
+          pytest_exit=$?
+          report_exit=0
+          sed -i "s|<package name=\".\"|<package name=\"cpu-project\"|g" /tmp/coverage-cpu.xml || report_exit=$?
+          sudo cp /tmp/test-results-cpu.xml /workspaces/repo/test-results-cpu.xml || report_exit=$?
+          sudo cp /tmp/coverage-cpu.xml /workspaces/repo/coverage-cpu.xml || report_exit=$?
+          if [ "$pytest_exit" -ne 0 ]; then
+            exit "$pytest_exit"
+          fi
+          exit "$report_exit"
+        '
+    displayName: "Build and run pytest (cpu-project)"
+
+  - bash: |
+      set -e
+      WORKSPACE_ROOT="$(pwd)"
+      devcontainer up --workspace-folder "$WORKSPACE_ROOT" \
+        --config src/sample_pytorch_gpu_project/.devcontainer/devcontainer.json
+      devcontainer exec --workspace-folder "$WORKSPACE_ROOT" \
+        --config src/sample_pytorch_gpu_project/.devcontainer/devcontainer.json \
+        bash -c '
+          cd /workspaces/repo/src/sample_pytorch_gpu_project &&
+          COVERAGE_FILE=/tmp/.coverage pytest tests/ \
+            --junitxml=/tmp/test-results-gpu.xml \
+            -o junit_suite_name=gpu-project \
+            --doctest-modules \
+            --cov=. \
+            --cov-config=/workspaces/repo/pyproject.toml \
+            --cov-report=xml:/tmp/coverage-gpu.xml
+          pytest_exit=$?
+          report_exit=0
+          sed -i "s|<package name=\".\"|<package name=\"gpu-project\"|g" /tmp/coverage-gpu.xml || report_exit=$?
+          sudo cp /tmp/test-results-gpu.xml /workspaces/repo/test-results-gpu.xml || report_exit=$?
+          sudo cp /tmp/coverage-gpu.xml /workspaces/repo/coverage-gpu.xml || report_exit=$?
+          if [ "$pytest_exit" -ne 0 ]; then
+            exit "$pytest_exit"
+          fi
+          exit "$report_exit"
+        '
+    displayName: "Build and run pytest (gpu-project)"
+
+  - bash: |
+      set -e
+      WORKSPACE_ROOT="$(pwd)"
+      devcontainer up --workspace-folder "$WORKSPACE_ROOT" \
+        --config notebooks/.devcontainer/devcontainer.json
+      devcontainer exec --workspace-folder "$WORKSPACE_ROOT" \
+        --config notebooks/.devcontainer/devcontainer.json \
+        bash -c 'python --version && pytest --version && ruff --version'
+    displayName: "Build and smoke test notebooks devcontainer"
 
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: "/tmp/artifact_output/**/test-results-*.xml"
+      testResultsFiles: 'test-results-*.xml'
     condition: succeededOrFailed()
 
-  # Publish code coverage results
-  - task: PublishCodeCoverageResults@1
+  # Publish code coverage results (PublishCodeCoverageResults@2 supports glob patterns and merges multiple files)
+  - task: PublishCodeCoverageResults@2
     inputs:
-      codeCoverageTool: 'Cobertura' # Available options: 'JaCoCo', 'Cobertura'
-      summaryFileLocation: '/tmp/artifact_output/coverage.xml'
+      summaryFileLocation: 'coverage-*.xml'
       pathToSources: src/
-      #reportDirectory: # Optional
-      #additionalCodeCoverageFiles: # Optional
-      failIfCoverageEmpty: false # Optional
+      failIfCoverageEmpty: false
+    condition: succeededOrFailed()
 
   - bash: |
       sudo rm -rfv /home/azureuser/myagent/_work/* /home/azureuser/myagent/_work/.* || true
