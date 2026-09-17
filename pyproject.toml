@@ -24,9 +24,18 @@ select = ["E", "F", "B", "S", "I", "N"]
 pythonpath = "src"
 
 [tool.coverage.run]
+source = ["src"]
+relative_files = true
 omit = [
     # ignore all notebooks in src
     "*/notebooks/*",
     # ignore all tests in src
     "*/tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
 ]
