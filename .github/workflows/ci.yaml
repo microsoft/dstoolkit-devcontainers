@@ -40,7 +40,7 @@ jobs:
           cp .env.example ../../.env
 
       - name: Build and run pytest (cpu-project)
-        uses: devcontainers/ci@v0.3
+        uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
         with:
           configFile: src/sample_cpu_project/.devcontainer/devcontainer.json
           push: never
@@ -69,7 +69,7 @@ jobs:
           p.write_text(re.sub(r'\s*\"--gpus\",\s*\"all\",', '', p.read_text()))
           "
       - name: Build and run pytest (gpu-project)
-        uses: devcontainers/ci@v0.3
+        uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
         with:
           configFile: src/sample_pytorch_gpu_project/.devcontainer/devcontainer.json
           push: never
@@ -88,7 +88,7 @@ jobs:
             sudo cp /tmp/coverage-gpu.xml ${WORKSPACE_ROOT}/coverage-gpu.xml
 
       - name: Build and smoke test notebooks devcontainer
-        uses: devcontainers/ci@v0.3
+        uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
         with:
           configFile: notebooks/.devcontainer/devcontainer.json
           push: never
